@@ -5,21 +5,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Chat</title>
-    <script src="./tailwindcss-3.4.14.js"></script>
+    <script id="tailwindcss" src="tailwindcss-3.4.14.js"></script>
 </head>
 
-<body class="bg-gray-100 h-screen flex flex-col">
-    <div id="apiKeyForm" class="bg-white p-4 shadow-lg relative mb-4 hidden">
-        <div class="relative max-w-2xl mx-auto w-full">
-            <label for="apiKeyInput" class="block text-gray-700 text-sm font-bold mb-2">Enter your OpenAI API Key:</label>
-            <input id="apiKeyInput" type="text" placeholder="Your API Key"
-                class="w-full h-10 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none mb-2">
-            <button id="saveApiKeyButton"
-                class="bg-yellow-400 text-black px-4 py-2 rounded-lg hover:bg-yellow-300 transition">
-                Save API Key
+<body class="bg-gray-100 dark:bg-gray-950 h-screen flex flex-col">
+    <form id="propertiesForm" class="hidden bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 fixed inset-x-0 inset-y-0 p-4 shadow-lg z-10">
+        <div class="relative max-w-2xl mx-auto w-full space-y-3">
+          <h2 class="border-b pb-2 dark:border-gray-700 font-bold">Settings</h2>
+          <p class="text-sm font-thin">Add your preffered AI chat settings</p>
+          <label class="block">
+            <p class="block text-sm font-bold mb-2">API Key</p>
+            <p class="block text-xs mb-2 font-thin -mt-1">AI service provider's API Key</p>
+            <input name="api_key" type="text" required
+                class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none" />
+          </label>
+          <label class="block relative">
+            <p class="block text-sm font-bold mb-2">Proxy Server URL</p>
+            <p class="block text-xs mb-2 font-thin -mt-1">
+              URL to a proxy service to enable running from a single on-device file.<br/>
+              We recommended 
+              <code
+                class="text-green-500 dark:text-green-400 bg-green-50 dark:bg-green-950 px-1 rounded"
+                onclick="this.parentElement.nextElementSibling.value = this.textContent"
+              >https://cheap-lion-17.deno.dev?e=</code>
+            </p>
+            <input name="proxy" type="url" required
+                class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none" />
+            <!-- <span class="r absolute border border-green-400 px-1 r right-3 rounded-sm text-green-400 text-xs top-10">recommended</span> -->
+          </label>
+          <div class="block">
+            <button
+                class="bg-yellow-400 dark:bg-yellow-500 text-black font-semibold px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 hover:bg-yellow-300 transition focus:bg-yellow-500/90 mt-2">
+                Save Settings
             </button>
+          </div>
         </div>
-    </div>
+    </form>
 
     <div class="flex-1 overflow-y-auto p-4 w-full">
         <div id="chatContainer" class="space-y-4 max-w-2xl mx-auto w-full">
@@ -39,34 +60,72 @@
         </div>
     </div>
 
-    <form id="chatForm" class="bg-white p-4 shadow-lg relative">
+    <form id="chatForm" class="p-4 shadow-lg relative">
+      <!-- #TODO: loop through /models appending response - ->
+      <label>
+        <p class="block text-gray-700 text-sm font-bold mb-2">Model Name</p>
+        <select name="model" type="text" required
+            class="w-full h-10 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none mb-2">
+            <option value="default">Default</option>
+        </select>
+      </label>
+      <!- -  -->
+    
         <div class="relative max-w-2xl mx-auto w-full">
-            <textarea id="messageInput" placeholder="Type your message..."
-                class="w-full h-32 p-4 pb-14 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
+            <textarea id="messageInput" placeholder="What do you wanna do?"
+                class="bg-white dark:bg-gray-800 dark:border-gray-700 w-full h-32 p-4 pb-14 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
                 rows="4"></textarea>
             <button type="submit"
-                class="absolute bottom-2 right-2 bg-yellow-400 text-black px-4 py-2 rounded-lg hover:bg-yellow-300 transition mb-2">
-                Send
+              class="absolute bg-yellow-400 dark:bg-yellow-500 hover:bg-yellow-300 px-4 bottom-4 right-4 rounded-lg text-black transition">
+              <span class="sr-only">Send</span>
+              <i style="font: normal 32px/1 Georgia, serif; text-indent: -.45em;" class="block overflow-hidden w-3">&rbarr;</i>
+              <!-- <i style="font: normal 32px/1.1 Georgia, serif; text-indent: -.45em;" class="block overflow-hidden w-3">&rbarr;</i> -->
+            </button>
+            <button type="button" onclick="document.getElementById('propertiesForm').classList.remove('hidden')"
+              class="absolute bg-gray-100 dark:bg-gray-700 px-4 py-1 bottom-4 left-4 rounded-lg text-gray-500 dark:text-gray-400 font-semibold transition"
+              style="/* box-shadow: 0 0 8px #ddd8 inset */;"
+            >
+              Settings
             </button>
         </div>
     </form>
 
     <script>
-        (function() {
-        let apiKey;
+      (function() {
+        const storagePrefix = "0xkuz/chat/";
+        const settingsPrefix = `${storagePrefix}settings/`
+        const settings = { API_KEY: null, PROXY: null, MODEL: "default" };
 
         // Check if API key is saved in local storage
-        if (localStorage.getItem('openaiApiKey')) {
-            apiKey = localStorage.getItem('openaiApiKey');
-        } else {
-            document.getElementById('apiKeyForm').classList.remove('hidden');
+        for (const [property, value] of Object.entries(settings)) {
+          if (value) continue;
+
+          if (localStorage.getItem(`${settingsPrefix}${property}`)) {
+            settings[property] = localStorage.getItem(`${settingsPrefix}${property}`);
+          } else {
+            document.getElementById('propertiesForm').classList.remove('hidden');
+            break;
+          }
         }
 
         // Save API key to local storage and hide the form
-        document.getElementById('saveApiKeyButton').addEventListener('click', () => {
-            apiKey = document.getElementById('apiKeyInput').value.trim();
-            localStorage.setItem('openaiApiKey', apiKey);
-            document.getElementById('apiKeyForm').classList.add('hidden');
+        document.getElementById('propertiesForm').addEventListener('submit', function saveProperties(event) {
+          event.preventDefault();
+          const fd = new FormData(event.target);
+
+          console.log({fd});
+          // return fd;
+          
+          settings.API_KEY = fd.get('api_key').trim();
+          settings.PROXY = fd.get('proxy').trim();
+
+          // localStorage.setItem(`${settingsPrefix}/API_KEY`, settings.API_KEY);
+          // localStorage.setItem(`${settingsPrefix}/PROXY`, settings.PROXY);
+
+          localStorage.setItem(`${settingsPrefix}API_KEY`, (settings.API_KEY = fd.get('api_key').trim()));
+          localStorage.setItem(`${settingsPrefix}PROXY`, (settings.PROXY = fd.get('proxy').trim()));
+
+          document.getElementById('propertiesForm').classList.add('hidden');
         });
 
         document.getElementById('chatForm').addEventListener('submit', async (e) => {
@@ -109,7 +168,7 @@
         }
 
         async function aiCall(query) {
-            if (!apiKey) {
+            if (!settings.API_KEY) {
                 throw new Error('API key is missing');
             }
 
@@ -121,16 +180,16 @@
             };
             // */
 
-            const response = await fetch('https://api.venice.ai/api/v1/chat/completions', {
+            const response = await fetch(settings.PROXY + 'https://api.venice.ai/api/v1/chat/completions', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
+                    'Authorization': `Bearer ${settings.API_KEY}`
                 },
                 body: JSON.stringify({
-                    "model": "qwen-2.5-coder-32b",
+                    "model": settings.MODEL,
                     "messages": [{role: "user", content: query}],
-                    "max_tokens": 150
+                    // "max_tokens": 150
                 })
             });
 
@@ -141,7 +200,7 @@
             const data = await response.json();
             return data.choices[0].message.content.trim();
         }
-        })();
+      })();
     </script>
 </body>
 
