@@ -286,7 +286,7 @@
         }
 
         function loadModels() {
-          const options = {method: 'GET', headers: {Authorization: `Bearer ${settings.API_KEY}`}};
+          const options = { method: 'GET', headers: { Authorization: `Bearer ${settings.API_KEY}` } };
 
           fetch(settings.PROXY + 'https://api.venice.ai/api/v1/models?type=all', options)
             .then(response => response.json())
@@ -296,9 +296,29 @@
                 return m;
               });
 
-              localStorage.setItem(`${settingsPrefix}MODELS`, (data));
+              localStorage.setItem(`${settingsPrefix}MODELS`, JSON.stringify(data));
 
-              return data;
+              // Get the models container
+              const modelsContainer = document.querySelector('#models .bg-white.dark\\:bg-gray-800');
+
+              // Clear existing models
+              // modelsContainer.innerHTML = '';
+
+              // Add default model template
+              const defaultModel = document.querySelector('#model-template').cloneNode(true);
+              defaultModel.classList.remove('hidden');
+              modelsContainer.appendChild(defaultModel);
+
+              // Loop over the data and create a new label for each model
+              data.forEach(model => {
+                const modelLabel = document.querySelector('#model-template').cloneNode(true);
+                modelLabel.id = model.id; // make sure each model has a unique ID
+                modelLabel.classList.remove('hidden');
+                modelLabel.querySelector('input[name="model"]').value = model.id;
+                modelLabel.querySelector('h3').textContent = model.id;
+                modelLabel.querySelector('a').textContent = model.id; // or you could use a more descriptive property
+                modelsContainer.appendChild(modelLabel);
+              });
             })
             .catch(err => console.error(err));
         }
