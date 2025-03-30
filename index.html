@@ -114,7 +114,7 @@
                 </div>
               </div>
             </div>
-            <div class="bg-white dark:bg-gray-800 w-full border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none mb-2 divide-y dark:divide-gray-700 max-h-[50vh] overflow-y-auto">
+            <div id="models-container" class="bg-white dark:bg-gray-800 w-full border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none mb-2 divide-y dark:divide-gray-700 max-h-[50vh] overflow-y-auto">
               <!-- #TODO: loop through /models appending response -->
               <label class="table w-full p-4">
                 <div class="table-cell align-middle w-12">
@@ -299,7 +299,7 @@
               localStorage.setItem(`${settingsPrefix}MODELS`, JSON.stringify(data));
 
               // Get the models container
-              const modelsContainer = document.querySelector('#models .bg-white.dark\\:bg-gray-800');
+              const modelsContainer = document.querySelector('#models-container');
 
               // Clear existing models
               // modelsContainer.innerHTML = '';
