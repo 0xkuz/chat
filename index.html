@@ -1,193 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Chat</title>
     <script id="tailwindcss" src="tailwindcss-3.4.14.js"></script>
-</head>
+  </head>
 
-<body class="bg-gray-100 dark:bg-gray-950 text-gray-600 dark:text-gray-200 h-screen flex flex-col">
-    <form id="propertiesForm" class="hidden bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 fixed inset-x-0 inset-y-0 p-4 shadow-lg z-20">
-        <div class="relative max-w-2xl mx-auto w-full space-y-3">
-          <h2 class="border-b pb-2 dark:border-gray-700 font-bold">Settings</h2>
-          <p class="text-sm font-thin">Add your preferred AI chat settings</p>
-          <label class="block">
-            <p class="block text-sm font-bold mb-2">API key</p>
-            <p class="block text-xs mb-2 font-thin -mt-1">AI service provider's API Key</p>
-            <input name="api_key" type="text" required
-                class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none" />
-          </label>
-          <label class="block relative">
-            <p class="block text-sm font-bold mb-2">API endpoint/ URL</p>
-            <p class="block text-xs mb-2 font-thin -mt-1">
-              AI service provider's URL<br/>
-              We recommended 
-              <code
-                class="text-green-500 dark:text-green-400 bg-green-50 dark:bg-green-950 px-1 rounded"
-                onclick="this.parentElement.nextElementSibling.value = this.textContent"
-              ><i class="sr-only">http://</i>localhost:11434<i class="sr-only">/v1/chat/completions</i></code>
-              or
-              <code
-                class="text-pink-500 dark:text-pink-500 bg-pink-50 dark:bg-pink-950/75 px-1 rounded"
-                onclick="this.parentElement.nextElementSibling.value = this.textContent"
-              ><i class="sr-only">https://</i>api.venice.ai<i class="sr-only">/api/v1/chat/completions</i></code>
-            </p>
-            <input name="endpoint" type="url" required
-                class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none" />
-            <!-- <span class="r absolute border border-green-400 px-1 r right-3 rounded-sm text-green-400 text-xs top-10">recommended</span> -->
-          </label>
-          <label class="block relative">
-            <p class="block text-sm font-bold mb-2">Proxy Server URL</p>
-            <p class="block text-xs mb-2 font-thin -mt-1">
-              URL to a proxy service to enable running from a single on-device file.<br/>
-              We recommended 
-              <code
-                class="text-green-500 dark:text-green-400 bg-green-50 dark:bg-green-950 px-1 rounded"
-                onclick="this.parentElement.nextElementSibling.value = this.textContent"
-              >https://cheap-lion-17.deno.dev?e=</code>
-            </p>
-            <input name="proxy" type="url"
-                class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none" />
-            <!-- <span class="r absolute border border-green-400 px-1 r right-3 rounded-sm text-green-400 text-xs top-10">recommended</span> -->
-          </label>
-          <div class="block">
-            <button type="submit" name="save"
-                class="bg-yellow-400 dark:bg-yellow-500 text-black font-semibold px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 hover:bg-yellow-300 transition focus:bg-yellow-500/90 mt-2">
-                Save Settings
-            </button>
-            <button type="submit" name="close"
-                class="bg-transparent text-black dark:text-white font-semibold px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 transition mt-2">
-                Close
-            </button>
-          </div>
+  <body class="bg-gray-100 dark:bg-gray-950 text-gray-600 dark:text-gray-200 h-screen flex flex-col">
+    <form
+      id="propertiesForm"
+      class="hidden bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 fixed inset-x-0 inset-y-0 p-4 shadow-lg z-20"
+    >
+      <div class="relative max-w-2xl mx-auto w-full space-y-3">
+        <h2 class="border-b pb-2 dark:border-gray-700 font-bold">Settings</h2>
+        <p class="text-sm font-thin">Add your preferred AI chat settings</p>
+        <label class="block">
+          <p class="block text-sm font-bold mb-2">API key</p>
+          <p class="block text-xs mb-2 font-thin -mt-1">
+            AI service provider's API Key
+          </p>
+          <input
+            name="api_key"
+            type="text"
+            required
+            class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
+          />
+        </label>
+        <label class="block relative">
+          <p class="block text-sm font-bold mb-2">API endpoint/ URL</p>
+          <p class="block text-xs mb-2 font-thin -mt-1">
+            AI service provider's URL<br />
+            We recommended
+            <code
+              class="text-green-500 dark:text-green-400 bg-green-50 dark:bg-green-950 px-1 rounded"
+              onclick="this.parentElement.nextElementSibling.value = this.textContent"
+            ><i class="sr-only">http://</i>localhost:11434<i class="sr-only"
+              >/v1/chat/completions</i></code>
+            or
+            <code
+              class="text-pink-500 dark:text-pink-500 bg-pink-50 dark:bg-pink-950/75 px-1 rounded"
+              onclick="this.parentElement.nextElementSibling.value = this.textContent"
+            ><i class="sr-only">https://</i>api.venice.ai<i class="sr-only"
+              >/api/v1/chat/completions</i></code>
+          </p>
+          <input
+            name="endpoint"
+            type="url"
+            required
+            class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
+          />
+          <!-- <span class="r absolute border border-green-400 px-1 r right-3 rounded-sm text-green-400 text-xs top-10">recommended</span> -->
+        </label>
+        <label class="block relative">
+          <p class="block text-sm font-bold mb-2">Proxy Server URL</p>
+          <p class="block text-xs mb-2 font-thin -mt-1">
+            URL to a proxy service to enable running from a single on-device
+            file.<br />
+            We recommended
+            <code
+              class="text-green-500 dark:text-green-400 bg-green-50 dark:bg-green-950 px-1 rounded"
+              onclick="this.parentElement.nextElementSibling.value = this.textContent"
+            >https://cheap-lion-17.deno.dev?e=</code>
+          </p>
+          <input
+            name="proxy"
+            type="url"
+            class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
+          />
+          <!-- <span class="r absolute border border-green-400 px-1 r right-3 rounded-sm text-green-400 text-xs top-10">recommended</span> -->
+        </label>
+        <div class="block">
+          <button
+            type="submit"
+            name="save"
+            class="bg-yellow-400 dark:bg-yellow-500 text-black font-semibold px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 hover:bg-yellow-300 transition focus:bg-yellow-500/90 mt-2"
+          >
+            Save Settings
+          </button>
+          <button
+            type="submit"
+            name="close"
+            class="bg-transparent text-black dark:text-white font-semibold px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 transition mt-2"
+          >
+            Close
+          </button>
         </div>
+      </div>
     </form>
 
     <div class="flex-1 p-4 pb-56 w-full">
-        <div id="chatContainer" class="space-y-4 max-w-2xl mx-auto w-full">
-            <!-- Reusable message template -->
-            <div id="messageTemplate" class="hidden message-template flex items-start gap-2">
-                <div class="flex flex-col items-start w-full">
-                    <div class="flex items-center mb-1">
-                        <div class="sender-avatar size-12 inline-block rounded-full p-2 mr-2 overflow-hidden align-middle bg-gray-300 bg-yellow-400 text-center text-gray-700 leading-[2em]">Sender</div>
-                        <span class="sender-name font-semibold whitespace-pre max-w-36 overflow-hidden text-ellipsis">Sender Name</span>
-                        <div class="ml-4">
-                          <button class="message-copy-btn bg-white/80 dark:bg-gray-800/70 leading-none px-4 py-3 rounded-xl text-sm">📋 Copy</button>
-                        </div>
-                    </div>
-                    <div class="message-content p-3 rounded-lg">
-                        <div class="message-text text-gray-600 dark:text-gray-200 whitespace-pre-wrap break-all">Message Content</div>
-                    </div>
-                </div>
-            </div>
-            <div id="loading" class="mt-4 hidden">
-              <i class="absolute block text-2xl text-center transition" style="animation: 700ms thinking ease-in-out infinite">🧠</i>
-              <span class="indent-[48px] inline-block leading-[2em]">thinking&hellip;</span>
-            </div>
-        </div>
-    </div>
-
-    <form id="chatForm" class="fixed p-4 shadow-lg bottom-0 inset-x-0">
-        <div class="relative max-w-2xl mx-auto w-full">
-            <textarea id="messageInput" name="message" placeholder="What you wanna do?"
-              class="bg-white dark:bg-gray-800 dark:border-gray-700 w-full max-h-[50vh] p-4 pb-16 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none dark:text-gray-200"
-              rows="2"
-            ></textarea>
-
-            <button type="submit"
-              class="absolute bg-yellow-400 dark:bg-yellow-500 hover:bg-yellow-300 p-3 bottom-4 right-4 rounded-lg text-black transition z-10">
-              <span class="sr-only">Send</span>
-              <i class="block w-4">
-                <!-- deno-fmt-ignore -->
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M9.68548 1L21 9.90947L21 12.8794L9.68548 22L7.37131 19.9L14.9455 12.8796L3 12.8794L3 9.90947L14.9455 9.90972L7.3713 3.10004L9.68548 1L9.68548 1Z"/></g></svg>
-              </i>
-            </button>
-
-            <div class="absolute bg-white bottom-1.5 dark:bg-gray-800 inset-x-4 pb-4">
-              <button type="button"
-                onclick="CHAT.toggleProperties('open')"
-                class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg text-gray-400 font-semibold transition"
-              >
-                <span class="sr-only">Menu</span>
-                <i class="block w-4 fill-current">
-                  <!-- deno-fmt-ignore -->
-                  <svg viewBox="0 0 24 24" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><path d="M3 18L21 18L21 16L3 16L3 18ZM3 13L21 13L21 11L3 11L3 13ZM3 6L3 8L21 8L21 6L3 6Z"></path></svg>
-                </i>
-              </button>
-              <button type="button"
-                onclick="CHAT.toggleModels('open')"
-                title="select model"
-                class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-400 font-semibold transition"
-              >
-                <span class="sr-only">Model</span>
-                <i class="block w-6">🧠</i>
-              </button>
-              <label type="button"
-                id="modelReasoning"
-                title="reasoning"
-                class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-400 font-semibold transition inline-block hidden"
-              >
-                <input type="hidden" id="hasReasoning" name="hasReasoning" />
-                <input type="checkbox" name="reasoning" value="true" class="model-feature sr-only" />
-                <i class="model-feature-icon block w-6" style="font-style: normal">🤔</i>
-              </label>
-              <label type="button"
-                id="modelWebsearch"
-                title="web search"
-                class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-400 font-semibold transition inline-block hidden"
-              >
-                <input type="hidden" id="hasWebsearch" name="hasWebsearch" />
-                <input type="checkbox" name="websearch" value="true" class="model-feature sr-only" />
-                <i class="model-feature-icon block w-6" style="font-style: normal">🌍</i>
-              </label>
-              <!-- 🪁🎈 send; 🧭 plan -->
-            </div>
-        </div>
-
-        <div id="models" class="hidden block absolute w-full bottom-0 inset-x-0 bg-gray-200 dark:bg-gray-900 z-10 p-4 pt-0 rounded-t-2xl max-h-[50vh] overflow-y-auto">
-          <div class="relative max-w-2xl mx-auto w-full">
-            <div class="table w-full text-gray-700 font-bold pt-4 pb-2 bg-gray-200 dark:bg-gray-900 dark:text-gray-400 sticky top-0 z-10">
-              <p class="table-cell">Choose a model</p>
-              <div class="table-cell w-24 text-right text-sm">
-                <div class="inline-block border border-black rounded block font-semibold dark:border-gray-400 divide-x divide-black dark:divide-gray-400">
-                  <button type="button" class="px-1" id="models-load" onclick="CHAT.loadModels()">Load</button>
-                  <button type="button" class="px-1" id="models-close" onclick="CHAT.toggleModels('close')">Close</button>
-                </div>
+      <div id="chatContainer" class="space-y-4 max-w-2xl mx-auto w-full">
+        <!-- Reusable message template -->
+        <div
+          id="messageTemplate"
+          class="hidden message-template flex items-start gap-2"
+        >
+          <div class="flex flex-col items-start w-full">
+            <div class="flex items-center mb-1">
+              <div class="sender-avatar size-12 inline-block rounded-full p-2 mr-2 overflow-hidden align-middle bg-gray-300 bg-yellow-400 text-center text-gray-700 leading-[2em]">
+                Sender
+              </div>
+              <span
+                class="sender-name font-semibold whitespace-pre max-w-36 overflow-hidden text-ellipsis"
+              >Sender Name</span>
+              <div class="ml-4">
+                <button class="message-copy-btn bg-white/80 dark:bg-gray-800/70 leading-none px-4 py-3 rounded-xl text-sm">
+                  📋 Copy
+                </button>
               </div>
             </div>
-            <div id="models-container" class="bg-white dark:bg-gray-800 w-full border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none mb-2 divide-y dark:divide-gray-700">
-              <!-- #TODO: loop through /models appending response -->
-              <label id="model-template" class="table w-full p-4">
-                <div class="table-cell align-middle w-12">
-                  <input type="radio" name="model" value="default" class="modelInput" />
-                </div>
-                <div class="table-cell relative">
-                  <h3 class="block font-semibold">
-                    <span class="modelName">Default</span>
-                    <span class="modelCapabilities text-xs hidden"></span>
-                  </h3>
-                  <span class="modelId block">default</span>
-                  <a class="modelLink block absolute bottom-1 right-2 p-2 bg-yellow-400/30 rounded-full">🔗</a>
-                </div>
-              </label>
+            <div class="message-content p-3 rounded-lg">
+              <div class="message-text text-gray-600 dark:text-gray-200 whitespace-pre-wrap break-all">
+                Message Content
+              </div>
             </div>
           </div>
         </div>
+        <div id="loading" class="mt-4 hidden">
+          <i
+            class="absolute block text-2xl text-center transition"
+            style="animation: 700ms thinking ease-in-out infinite"
+          >🧠</i>
+          <span class="indent-[48px] inline-block leading-[2em]"
+          >thinking&hellip;</span>
+        </div>
+      </div>
+    </div>
+
+    <form id="chatForm" class="fixed p-4 shadow-lg bottom-0 inset-x-0">
+      <div class="relative max-w-2xl mx-auto w-full">
+        <textarea
+          id="messageInput"
+          name="message"
+          placeholder="What you wanna do?"
+          class="bg-white dark:bg-gray-800 dark:border-gray-700 w-full max-h-[50vh] p-4 pb-16 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none dark:text-gray-200"
+          rows="2"
+        ></textarea>
+
+        <button
+          type="submit"
+          class="absolute bg-yellow-400 dark:bg-yellow-500 hover:bg-yellow-300 p-3 bottom-4 right-4 rounded-lg text-black transition z-10"
+        >
+          <span class="sr-only">Send</span>
+          <i class="block w-4">
+            <!-- deno-fmt-ignore -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M9.68548 1L21 9.90947L21 12.8794L9.68548 22L7.37131 19.9L14.9455 12.8796L3 12.8794L3 9.90947L14.9455 9.90972L7.3713 3.10004L9.68548 1L9.68548 1Z"/></g></svg>
+          </i>
+        </button>
+
+        <div class="absolute bg-white bottom-1.5 dark:bg-gray-800 inset-x-4 pb-4">
+          <button
+            type="button"
+            onclick="CHAT.toggleProperties('open')"
+            class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg text-gray-400 font-semibold transition"
+          >
+            <span class="sr-only">Menu</span>
+            <i class="block w-4 fill-current">
+              <!-- deno-fmt-ignore -->
+              <svg viewBox="0 0 24 24" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><path d="M3 18L21 18L21 16L3 16L3 18ZM3 13L21 13L21 11L3 11L3 13ZM3 6L3 8L21 8L21 6L3 6Z"></path></svg>
+            </i>
+          </button>
+          <button
+            type="button"
+            onclick="CHAT.toggleModels('open')"
+            title="select model"
+            class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-400 font-semibold transition"
+          >
+            <span class="sr-only">Model</span>
+            <i class="block w-6">🧠</i>
+          </button>
+          <label
+            type="button"
+            id="modelReasoning"
+            title="reasoning"
+            class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-400 font-semibold transition inline-block hidden"
+          >
+            <input type="hidden" id="hasReasoning" name="hasReasoning" />
+            <input
+              type="checkbox"
+              name="reasoning"
+              value="true"
+              class="model-feature sr-only"
+            />
+            <i class="model-feature-icon block w-6" style="font-style: normal"
+            >🤔</i>
+          </label>
+          <label
+            type="button"
+            id="modelWebsearch"
+            title="web search"
+            class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-400 font-semibold transition inline-block hidden"
+          >
+            <input type="hidden" id="hasWebsearch" name="hasWebsearch" />
+            <input
+              type="checkbox"
+              name="websearch"
+              value="true"
+              class="model-feature sr-only"
+            />
+            <i class="model-feature-icon block w-6" style="font-style: normal"
+            >🌍</i>
+          </label>
+          <!-- 🪁🎈 send; 🧭 plan -->
+        </div>
+      </div>
+
+      <div
+        id="models"
+        class="hidden block absolute w-full bottom-0 inset-x-0 bg-gray-200 dark:bg-gray-900 z-10 p-4 pt-0 rounded-t-2xl max-h-[50vh] overflow-y-auto"
+      >
+        <div class="relative max-w-2xl mx-auto w-full">
+          <div class="table w-full text-gray-700 font-bold pt-4 pb-2 bg-gray-200 dark:bg-gray-900 dark:text-gray-400 sticky top-0 z-10">
+            <p class="table-cell">Choose a model</p>
+            <div class="table-cell w-24 text-right text-sm">
+              <div class="inline-block border border-black rounded block font-semibold dark:border-gray-400 divide-x divide-black dark:divide-gray-400">
+                <button
+                  type="button"
+                  class="px-1"
+                  id="models-load"
+                  onclick="CHAT.loadModels()"
+                >
+                  Load
+                </button>
+                <button
+                  type="button"
+                  class="px-1"
+                  id="models-close"
+                  onclick="CHAT.toggleModels('close')"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            id="models-container"
+            class="bg-white dark:bg-gray-800 w-full border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none mb-2 divide-y dark:divide-gray-700"
+          >
+            <!-- #TODO: loop through /models appending response -->
+            <label id="model-template" class="table w-full p-4">
+              <div class="table-cell align-middle w-12">
+                <input
+                  type="radio"
+                  name="model"
+                  value="default"
+                  class="modelInput"
+                />
+              </div>
+              <div class="table-cell relative">
+                <h3 class="block font-semibold">
+                  <span class="modelName">Default</span>
+                  <span class="modelCapabilities text-xs hidden"></span>
+                </h3>
+                <span class="modelId block">default</span>
+                <a
+                  class="modelLink block absolute bottom-1 right-2 p-2 bg-yellow-400/30 rounded-full"
+                >🔗</a>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
     </form>
 
     <script>
-      (function() {
-        const loading = document.getElementById('loading');
+      (function () {
+        const loading = document.getElementById("loading");
         const storagePrefix = "0xkuz/chat/";
-        const settingsPrefix = `${storagePrefix}settings/`
-        const settings = { API_KEY: null, ENDPOINT: null, PROXY: "", MODEL: null };
-    
+        const settingsPrefix = `${storagePrefix}settings/`;
+        const settings = {
+          API_KEY: null,
+          ENDPOINT: null,
+          PROXY: "",
+          MODEL: null,
+        };
+
         // Check if API key is saved in local storage
-        for (const [property, value] of Object.entries(settings).slice(0, 2)) {
+        for (
+          const [property, value] of Object.entries(settings).slice(
+            0,
+            2,
+          )
+        ) {
           const data = getLocalStorage(property);
-          
+
           if (data) {
             settings[property] = data;
           } else {
@@ -200,160 +297,208 @@
             break;
           }
         }
-    
-        // Save API key to local storage and hide the form
-        document.getElementById('propertiesForm').addEventListener('submit', function saveProperties(event) {
-          event.preventDefault();
-          const fd = new FormData(event.target);
-          const properties = ["api_key", "endpoint", "proxy"];
 
-          properties.forEach(property => {
-            const PROPERTY = property.toUpperCase();
-            settings[PROPERTY] = fd.get(property).trim();
-            setLocalStorage(`${PROPERTY}`, settings[PROPERTY]);
-          });
-    
-          toggleProperties("close");
-        });
-        
-        const messageInput = document.getElementById('messageInput');
-        messageInput.addEventListener("input", function changeMessageInputHeight(e) {
-          messageInput.rows = ((messageInput.value.split("\n").length - 1) || 1) + 1 
-        });
-    
-        const chatForm = document.getElementById('chatForm');
-        chatForm.addEventListener('submit', async function (e) {
+        // Save API key to local storage and hide the form
+        document.getElementById("propertiesForm").addEventListener(
+          "submit",
+          function saveProperties(event) {
+            event.preventDefault();
+            const fd = new FormData(event.target);
+            const properties = ["api_key", "endpoint", "proxy"];
+
+            properties.forEach((property) => {
+              const PROPERTY = property.toUpperCase();
+              settings[PROPERTY] = fd.get(property).trim();
+              setLocalStorage(`${PROPERTY}`, settings[PROPERTY]);
+            });
+
+            toggleProperties("close");
+          },
+        );
+
+        const messageInput = document.getElementById("messageInput");
+        messageInput.addEventListener(
+          "input",
+          function changeMessageInputHeight(e) {
+            messageInput.rows =
+              ((messageInput.value.split("\n").length - 1) || 1) + 1;
+          },
+        );
+
+        const chatForm = document.getElementById("chatForm");
+        chatForm.addEventListener("submit", async function (e) {
           e.preventDefault();
           const fd = new FormData(e.target);
           const message = fd.get("message");
           const formValues = Object.fromEntries(fd.entries());
           // const feature_suffix = `:${reasoning}&${websearch}`.replace(":&", ":");
           const featureSuffixParts = [];
-          formValues.hasReasoning === "true" && formValues.reasoning !== "true" && featureSuffixParts.push("disable_thinking=true");
-          formValues.hasWebsearch === "true" && formValues.websearch === "true" && featureSuffixParts.push("enable_web_search=on&enable_web_citations=true");
+          formValues.hasReasoning === "true" &&
+            formValues.reasoning !== "true" &&
+            featureSuffixParts.push("disable_thinking=true");
+          formValues.hasWebsearch === "true" &&
+            formValues.websearch === "true" &&
+            featureSuffixParts.push(
+              "enable_web_search=on&enable_web_citations=true",
+            );
 
           if (!message) return;
 
-          settings.MODEL = (fd.get("model") ?? settings.MODEL ?? "default") + ((featureSuffixParts.length && `:${featureSuffixParts.join("&")}`) || "");
+          settings.MODEL =
+            (fd.get("model") ?? settings.MODEL ?? "default") +
+            ((featureSuffixParts.length &&
+              `:${featureSuffixParts.join("&")}`) || "");
           // setLocalStorage(`MODEL`, settings.MODEL);
 
-          addMessage('user', message);
-          messageInput.value = '';
+          addMessage("user", message);
+          messageInput.value = "";
           messageInput.rows = 2;
 
-          const h = document.getElementById('chatContainer').scrollHeight;
-    
+          const h =
+            document.getElementById("chatContainer").scrollHeight;
+
           try {
             loading.parentElement.appendChild(loading);
             loading.classList.remove("hidden");
             window.scrollTo(0, h);
 
             const response = await aiCall(message);
-            addMessage('ai', response);
+            addMessage("ai", response);
           } catch (error) {
-            addMessage('ai', '**Error:** Could not get response');
+            addMessage("ai", "**Error:** Could not get response");
             console.error(error);
           } finally {
             loading.classList.add("hidden");
             window.scrollTo(0, h + 50);
           }
         });
-    
+
         function addMessage(sender, message) {
-          const template = document.getElementById('messageTemplate').cloneNode(true);
-          const messageText = template.querySelector('.message-text');
+          const template = document.getElementById("messageTemplate")
+            .cloneNode(true);
+          const messageText = template.querySelector(".message-text");
           const time = (new Date()).toISOString();
           template.id = "message-" + time.replace(/[^a-z0-9]/ig, "");
-          template.classList.remove('hidden');
-    
-          const isUser = sender === 'user';
-    
+          template.classList.remove("hidden");
+
+          const isUser = sender === "user";
+
           messageText.id = template.id.replace("-", "-content-");
           messageText.textContent = message;
-    
-          const copyBtn = template.querySelector('.message-copy-btn');
+
+          const copyBtn = template.querySelector(".message-copy-btn");
           // copyBtn.setAttribute("onclick", "CHAT.copyMessage('ID', this)".replace("ID", messageText.id.replace(/.+\-([a-z0-9]+)$/i, "$1")));
-          copyBtn.setAttribute("data-id", messageText.id.replace(/.+\-([a-z0-9]+)$/i, "$1"));
+          copyBtn.setAttribute(
+            "data-id",
+            messageText.id.replace(/.+\-([a-z0-9]+)$/i, "$1"),
+          );
           copyBtn.addEventListener("click", copyMessage);
 
-          template.querySelector('.sender-avatar').classList.remove(isUser? 'bg-gray-300': 'bg-yellow-400');
-          template.querySelector(".message-content").className += isUser? " bg-white dark:bg-gray-800": "";
-          template.querySelector('.sender-avatar').textContent = isUser? 'Me': 'AI';
-          template.querySelector('.sender-name').textContent = isUser? 'Me': settings.MODEL || 'AI Assistant';
-    
-          document.getElementById('chatContainer').appendChild(template);
+          template.querySelector(".sender-avatar").classList.remove(
+            isUser ? "bg-gray-300" : "bg-yellow-400",
+          );
+          template.querySelector(".message-content").className += isUser
+            ? " bg-white dark:bg-gray-800"
+            : "";
+          template.querySelector(".sender-avatar").textContent = isUser
+            ? "Me"
+            : "AI";
+          template.querySelector(".sender-name").textContent = isUser
+            ? "Me"
+            : settings.MODEL || "AI Assistant";
+
+          document.getElementById("chatContainer").appendChild(
+            template,
+          );
         }
-    
+
         async function aiCall(query) {
           if (!settings.API_KEY) {
-            throw new Error('API key is missing');
+            throw new Error("API key is missing");
           }
 
           const modelType = getLocalStorage("MODEL_TYPE") || "text";
-    
-          const response = await fetch(settings.PROXY + settings.ENDPOINT, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${settings.API_KEY}`
+
+          const response = await fetch(
+            settings.PROXY + settings.ENDPOINT,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${settings.API_KEY}`,
+              },
+              body: JSON.stringify({
+                "model": settings.MODEL,
+                "messages": [{ role: "user", content: query }],
+                // think: false, // #TODO: find way to stop model from thinking
+                stream: false,
+              }),
             },
-            body: JSON.stringify({
-              "model": settings.MODEL,
-              "messages": [{role: "user", content: query}],
-              // think: false, // #TODO: find way to stop model from thinking
-              stream: false,
-            })
-          });
-    
+          );
+
           if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
           }
-    
+
           const data = await response.json();
           return data.choices[0].message.content.trim();
         }
-    
+
         function toggleProperties(state = "open") {
-          const op = state === "open"? "remove": "add";
-          const propertiesForm = document.getElementById('propertiesForm');
+          const op = state === "open" ? "remove" : "add";
+          const propertiesForm = document.getElementById(
+            "propertiesForm",
+          );
           const properties = ["api_key", "endpoint", "proxy"];
-    
-          properties.forEach(property => (
-            propertiesForm.querySelector(`[name="${property}"]`).value = getLocalStorage(property.toUpperCase())
+
+          properties.forEach((property) => (
+            propertiesForm.querySelector(`[name="${property}"]`).value =
+              getLocalStorage(property.toUpperCase())
           ));
-    
-          propertiesForm.classList[op]('hidden');
+
+          propertiesForm.classList[op]("hidden");
         }
-    
+
         function toggleModels(state = "open") {
-          const op = state === "open"? "remove": "add";
-          const models = document.getElementById('models');
+          const op = state === "open" ? "remove" : "add";
+          const models = document.getElementById("models");
           const properties = ["model"];
 
           if (state === "open") {
-            const selected = models.querySelector(`[value="${settings.MODEL}"]`);
+            const selected = models.querySelector(
+              `[value="${settings.MODEL}"]`,
+            );
 
             if (selected) selected.checked = true;
           }
-    
-          models.classList[op]('hidden');
+
+          models.classList[op]("hidden");
         }
-    
+
         function loadModels() {
-          const options = { method: 'GET', headers: { Authorization: `Bearer ${settings.API_KEY}` } };
-    
-          fetch(settings.PROXY + `${settings.ENDPOINT.replace("chat/completions", "models")}?type=all`, options)
-            .then(response => response.json())
-            .then(response => {
-              const data = response.data.map(m => {
+          const options = {
+            method: "GET",
+            headers: { Authorization: `Bearer ${settings.API_KEY}` },
+          };
+
+          fetch(
+            settings.PROXY +
+              `${
+                settings.ENDPOINT.replace("chat/completions", "models")
+              }?type=all`,
+            options,
+          )
+            .then((response) => response.json())
+            .then((response) => {
+              const data = response.data.map((m) => {
                 m.created = (new Date(m.created * 1000)).toISOString();
                 return m;
               });
-    
+
               setLocalStorage(`MODELS`, JSON.stringify(data));
               renderModels(data);
             })
-            .catch(err => console.error(err));
+            .catch((err) => console.error(err));
         }
 
         const capabilities = {
@@ -373,17 +518,21 @@
 
         /**
          * Function to render models in modelsContainer
-         * 
-         * @param {Array|null} models 
+         *
+         * @param {Array|null} models
          */
         function renderModels(models) {
           models = models || [];
           const selectedModel = getLocalStorage("MODEL");
-          const $modelsContainer = document.querySelector('#models-container');
+          const $modelsContainer = document.querySelector(
+            "#models-container",
+          );
           const modelsContainer = $modelsContainer.cloneNode(true);
-          modelsContainer.innerHTML = ''; // Clear existing content
-    
-          const defaultModel = $modelsContainer.querySelector('#model-template').cloneNode(true);
+          modelsContainer.innerHTML = ""; // Clear existing content
+
+          const defaultModel = $modelsContainer.querySelector(
+            "#model-template",
+          ).cloneNode(true);
 
           if (!models || (models.length < 1)) {
             modelsContainer.appendChild(defaultModel);
@@ -391,20 +540,25 @@
 
           models.forEach((model) => {
             const modelLabel = defaultModel.cloneNode(true);
-            const modelSource = model && model.model_spec && model.model_spec.modelSource;
+            const modelSource = model && model.model_spec &&
+              model.model_spec.modelSource;
             /** @type {HTMLInputElement} */
             const modelInput = modelLabel.querySelector(".modelInput");
             modelLabel.id = model.id;
 
             modelInput.value = model.id;
 
-            if (selectedModel && selectedModel === model.id) modelInput.checked = true;
-            
-            modelLabel.querySelector(".modelName").textContent = (modelSource && modelSource.includes("huggingface.co") && modelSource.split("/").pop()) || model.id;
+            if (selectedModel && selectedModel === model.id) {
+              modelInput.checked = true;
+            }
+
+            modelLabel.querySelector(".modelName").textContent =
+              (modelSource && modelSource.includes("huggingface.co") &&
+                modelSource.split("/").pop()) || model.id;
             modelLabel.querySelector(".modelId").textContent = model.id;
 
             /** @type {HTMLAnchorElement} */
-            const modelLink = modelLabel.querySelector('.modelLink');
+            const modelLink = modelLabel.querySelector(".modelLink");
 
             if (modelSource) {
               modelLink.href = modelSource;
@@ -412,23 +566,27 @@
               modelLink.parentElement.removeChild(modelLink);
             }
 
-            const modelCapabilitiesContent = (
+            const modelCapabilitiesContent =
               (capabilities[model.type] || "") +
-              Object.entries((model && model.model_spec && model.model_spec.capabilities) || {})
-                .filter(([_k,v]) => typeof v === "boolean" && v)
+              Object.entries(
+                (model && model.model_spec &&
+                  model.model_spec.capabilities) || {},
+              )
+                .filter(([_k, v]) => typeof v === "boolean" && v)
                 .map(([k, v]) => (capabilities[k]))
-                .join("")
-            );
+                .join("");
             /** @type {HTMLSpanElement} */
-            const modelCapabilities = (
-              modelLabel.querySelector(".modelCapabilities")
+            const modelCapabilities = modelLabel.querySelector(
+              ".modelCapabilities",
             );
 
             if (modelCapabilitiesContent) {
               modelCapabilities.textContent = modelCapabilitiesContent;
               modelCapabilities.classList.remove("hidden");
             } else {
-              modelCapabilities.parentElement.removeChild(modelCapabilities);
+              modelCapabilities.parentElement.removeChild(
+                modelCapabilities,
+              );
             }
 
             modelsContainer.appendChild(modelLabel);
@@ -442,31 +600,55 @@
         function renderTools(modelId) {
           /** @type {Array} */
           const models = getLocalStorage("MODELS", true) || [];
-          
+
           if (models && models.length && modelId) {
-            const model = models.find(m => m.id === modelId);
+            const model = models.find((m) => m.id === modelId);
             console.log(model);
 
             if (model) {
               if (model.model_spec && model.model_spec.capabilities) {
                 /** @type {HTMLLabelElement} */
-                const modelReasoning = document.getElementById("modelReasoning");
+                const modelReasoning = document.getElementById(
+                  "modelReasoning",
+                );
                 /** @type {HTMLInputElement} */
-                const reasoningInput = modelReasoning.querySelector("[name=reasoning]");
+                const reasoningInput = modelReasoning.querySelector(
+                  "[name=reasoning]",
+                );
                 /** @type {HTMLLabelElement} */
-                const modelWebsearch = document.getElementById("modelWebsearch");
+                const modelWebsearch = document.getElementById(
+                  "modelWebsearch",
+                );
                 /** @type {HTMLInputElement} */
-                const websearchInput = modelWebsearch.querySelector("[name=websearch]");
-                
-                modelReasoning.classList[model.model_spec.capabilities.supportsReasoning? "remove": "add"]("hidden");
-                modelReasoning.disabled = ! model.model_spec.capabilities.supportsReasoning;
-                reasoningInput.checked = model.model_spec.capabilities.supportsReasoning;
-                document.getElementById("hasReasoning").value = model.model_spec.capabilities.supportsReasoning;
+                const websearchInput = modelWebsearch.querySelector(
+                  "[name=websearch]",
+                );
 
-                modelWebsearch.classList[model.model_spec.capabilities.supportsWebSearch? "remove": "add"]("hidden");
-                modelWebsearch.disabled = ! model.model_spec.capabilities.supportsWebSearch;
-                websearchInput.checked = model.model_spec.capabilities.supportsWebSearch;
-                document.getElementById("hasWebsearch").value = model.model_spec.capabilities.supportsWebSearch;
+                modelReasoning.classList
+                  [
+                    model.model_spec.capabilities.supportsReasoning
+                      ? "remove"
+                      : "add"
+                  ]("hidden");
+                modelReasoning.disabled = !model.model_spec.capabilities
+                  .supportsReasoning;
+                reasoningInput.checked =
+                  model.model_spec.capabilities.supportsReasoning;
+                document.getElementById("hasReasoning").value =
+                  model.model_spec.capabilities.supportsReasoning;
+
+                modelWebsearch.classList
+                  [
+                    model.model_spec.capabilities.supportsWebSearch
+                      ? "remove"
+                      : "add"
+                  ]("hidden");
+                modelWebsearch.disabled = !model.model_spec.capabilities
+                  .supportsWebSearch;
+                websearchInput.checked =
+                  model.model_spec.capabilities.supportsWebSearch;
+                document.getElementById("hasWebsearch").value =
+                  model.model_spec.capabilities.supportsWebSearch;
               }
 
               if (model.id) setLocalStorage("MODEL", model.id);
@@ -474,12 +656,12 @@
             }
           }
         }
-    
+
         /**
          * Function to load data from local storage
-         * 
-         * @param {keyof settings | "MODELS"} key 
-         * @param {boolean} [parse=false] 
+         *
+         * @param {keyof settings | "MODELS"} key
+         * @param {boolean} [parse=false]
          */
         function getLocalStorage(key, parse = false) {
           const value = localStorage.getItem(`${settingsPrefix}${key}`);
@@ -489,7 +671,7 @@
               return JSON.parse(value);
             } catch (_e) {}
           } else {
-            return value
+            return value;
           }
 
           return null;
@@ -497,17 +679,19 @@
 
         /**
          * Function to load data from local storage
-         * 
-         * @param {keyof settings | "MODELS"} key 
+         *
+         * @param {keyof settings | "MODELS"} key
          */
         function setLocalStorage(key, value) {
-          localStorage.setItem(`${ settingsPrefix}${key}`, value);
-         }
+          localStorage.setItem(`${settingsPrefix}${key}`, value);
+        }
 
         // async function copyMessage(id, $el) {
         function copyMessage(event) {
           const $el = event.target, id = $el.dataset.id;
-          const $message = document.getElementById("message-content-" + id);
+          const $message = document.getElementById(
+            "message-content-" + id,
+          );
 
           if ($message) {
             const text = $el.textContent;
@@ -516,29 +700,32 @@
                 // console.log($el);
                 $el.textContent = "✔ Copied";
 
-                setTimeout(() => { 
+                setTimeout(() => {
                   $el.textContent = text;
                 }, 5000);
               })
-              .catch((e) => alert(e))
+              .catch((e) => alert(e));
           }
         }
-    
-        // Call loadModelsFromLocalStorage when the document is fully loaded
-        document.addEventListener('DOMContentLoaded', () => {
-          chatForm.addEventListener("change", function onChatFormChange(e) {
-            const target = e.target;
 
-            // Model changed
-            if (target && target.className === "modelInput") {
-              renderTools(target.value);
-            }
-          });
+        // Call loadModelsFromLocalStorage when the document is fully loaded
+        document.addEventListener("DOMContentLoaded", () => {
+          chatForm.addEventListener(
+            "change",
+            function onChatFormChange(e) {
+              const target = e.target;
+
+              // Model changed
+              if (target && target.className === "modelInput") {
+                renderTools(target.value);
+              }
+            },
+          );
 
           renderModels(getLocalStorage("MODELS", true));
           renderTools(getLocalStorage("MODEL"));
         });
-    
+
         // exports
         window.CHAT = {
           toggleProperties,
@@ -548,43 +735,61 @@
         };
       })();
     </script>
-    
+
     <script id="build">
       (function () {
-        const url = new URLSearchParams(window.location.search)
-        
+        const url = new URLSearchParams(window.location.search);
+
         if (url.has("build")) {
           // ---
-          document.getElementById("propertiesForm").classList.remove("hidden");
+          document.getElementById("propertiesForm").classList.remove(
+            "hidden",
+          );
           document.getElementById("models").classList.remove("hidden");
           setTimeout(() => {
-            document.getElementById("propertiesForm").classList.add("hidden");
+            document.getElementById("propertiesForm").classList.add(
+              "hidden",
+            );
             document.getElementById("models").classList.add("hidden");
             build();
-          }, 1000)
+          }, 1000);
           // ---
 
           function build() {
-            document.querySelectorAll("script").forEach(s => (
+            document.querySelectorAll("script").forEach((s) => (
               (s.id === "build" || s.id === "tailwindcss") &&
               s.parentElement.removeChild(s)
             ));
-            const html = ["<!DOCTYPE html>", document.children[0].outerHTML].join("\n");
-            const blob = new Blob([html], { type:"text/html" });
-            const link = `<a href="${URL.createObjectURL(blob)}" download="CHAT.html" class="bg-yellow-400 text-black p-4 font-bold z-10">Download HTML</a>`;
+            const html = [
+              "<!DOCTYPE html>",
+              document.children[0].outerHTML,
+            ].join("\n");
+            const blob = new Blob([html], { type: "text/html" });
+            const link = `<a href="${
+              URL.createObjectURL(blob)
+            }" download="CHAT.html" class="bg-yellow-400 text-black p-4 font-bold z-10">Download HTML</a>`;
             document.body.innerHTML += link;
           }
         }
-      })()
+      })();
     </script>
     <style>
-      .model-feature + .model-feature-icon { opacity: .75; filter: grayscale(1); }
-      .model-feature:checked + .model-feature-icon { opacity: 1; filter: grayscale(0); }
+      .model-feature + .model-feature-icon {
+        opacity: 0.75;
+        filter: grayscale(1);
+      }
+      .model-feature:checked + .model-feature-icon {
+        opacity: 1;
+        filter: grayscale(0);
+      }
       @keyframes thinking {
-        0% { transform: scale(1); }
-        100% { transform: scale(1.25); }
+        0% {
+          transform: scale(1);
+        }
+        100% {
+          transform: scale(1.25);
+        }
       }
     </style>
-</body>
-
+  </body>
 </html>
