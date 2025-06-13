@@ -9,15 +9,34 @@
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-950 text-gray-600 dark:text-gray-200 h-screen flex flex-col">
-    <form id="propertiesForm" class="hidden bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 fixed inset-x-0 inset-y-0 p-4 shadow-lg z-10">
+    <form id="propertiesForm" class="hidden bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 fixed inset-x-0 inset-y-0 p-4 shadow-lg z-20">
         <div class="relative max-w-2xl mx-auto w-full space-y-3">
           <h2 class="border-b pb-2 dark:border-gray-700 font-bold">Settings</h2>
-          <p class="text-sm font-thin">Add your preffered AI chat settings</p>
+          <p class="text-sm font-thin">Add your preferred AI chat settings</p>
           <label class="block">
-            <p class="block text-sm font-bold mb-2">API Key</p>
+            <p class="block text-sm font-bold mb-2">API key</p>
             <p class="block text-xs mb-2 font-thin -mt-1">AI service provider's API Key</p>
             <input name="api_key" type="text" required
                 class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none" />
+          </label>
+          <label class="block relative">
+            <p class="block text-sm font-bold mb-2">API endpoint/ URL</p>
+            <p class="block text-xs mb-2 font-thin -mt-1">
+              AI service provider's URL<br/>
+              We recommended 
+              <code
+                class="text-green-500 dark:text-green-400 bg-green-50 dark:bg-green-950 px-1 rounded"
+                onclick="this.parentElement.nextElementSibling.value = this.textContent"
+              ><i class="sr-only">http://</i>localhost:11434<i class="sr-only">/v1/chat/completions</i></code>
+              or
+              <code
+                class="text-pink-500 dark:text-pink-500 bg-pink-50 dark:bg-pink-950/75 px-1 rounded"
+                onclick="this.parentElement.nextElementSibling.value = this.textContent"
+              ><i class="sr-only">https://</i>api.venice.ai<i class="sr-only">/api/v1/chat/completions</i></code>
+            </p>
+            <input name="endpoint" type="url" required
+                class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none" />
+            <!-- <span class="r absolute border border-green-400 px-1 r right-3 rounded-sm text-green-400 text-xs top-10">recommended</span> -->
           </label>
           <label class="block relative">
             <p class="block text-sm font-bold mb-2">Proxy Server URL</p>
@@ -29,7 +48,7 @@
                 onclick="this.parentElement.nextElementSibling.value = this.textContent"
               >https://cheap-lion-17.deno.dev?e=</code>
             </p>
-            <input name="proxy" type="url" required
+            <input name="proxy" type="url"
                 class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none" />
             <!-- <span class="r absolute border border-green-400 px-1 r right-3 rounded-sm text-green-400 text-xs top-10">recommended</span> -->
           </label>
@@ -46,32 +65,39 @@
         </div>
     </form>
 
-    <div class="flex-1 overflow-y-auto p-4 w-full">
+    <div class="flex-1 p-4 pb-56 w-full">
         <div id="chatContainer" class="space-y-4 max-w-2xl mx-auto w-full">
             <!-- Reusable message template -->
             <div id="messageTemplate" class="hidden message-template flex items-start gap-2">
                 <div class="flex flex-col items-start w-full">
                     <div class="flex items-center mb-1">
-                        <div class="sender-avatar size-12 inline-block rounded-full p-2 mr-2 overflow-hidden align-middle bg-gray-300 bg-yellow-400 text-center leading-[2em]">Sender</div>
-                        <span class="sender-name text-gray-600 font-semibold">Sender Name</span>
+                        <div class="sender-avatar size-12 inline-block rounded-full p-2 mr-2 overflow-hidden align-middle bg-gray-300 bg-yellow-400 text-center text-gray-700 leading-[2em]">Sender</div>
+                        <span class="sender-name font-semibold">Sender Name</span>
+                        <div class="ml-4">
+                          <button class="message-copy-btn bg-white/80 dark:bg-gray-800/70 leading-none px-4 py-3 rounded-xl text-sm">📋 Copy</button>
+                        </div>
                     </div>
                     <div class="message-content bg-white dark:bg-gray-800 p-3 rounded-lg">
-                        <p class="message-text text-gray-600 dark:text-gray-200 whitespace-pre-wrap break-all">Message Content</p>
+                        <div class="message-text text-gray-600 dark:text-gray-200 whitespace-pre-wrap break-all">Message Content</div>
                     </div>
                 </div>
+            </div>
+            <div id="loading" class="mt-4 hidden">
+              <i class="absolute block text-2xl text-center transition" style="animation: 700ms thinking ease-in-out infinite">🧠</i>
+              <span class="indent-[48px] inline-block leading-[2em]">thinking&hellip;</span>
             </div>
         </div>
     </div>
 
-    <form id="chatForm" class="relative p-4 shadow-lg relative">
+    <form id="chatForm" class="fixed p-4 shadow-lg bottom-0 inset-x-0">
         <div class="relative max-w-2xl mx-auto w-full">
-            <textarea id="messageInput" placeholder="What you wanna do?"
-              class="bg-white dark:bg-gray-800 dark:border-gray-700 w-full h-32 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none dark:text-gray-200"
-              rows="4"
+            <textarea id="messageInput" name="message" placeholder="What you wanna do?"
+              class="bg-white dark:bg-gray-800 dark:border-gray-700 w-full max-h-[50vh] p-4 pb-16 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none dark:text-gray-200"
+              rows="2"
             ></textarea>
 
             <button type="submit"
-              class="absolute bg-yellow-400 dark:bg-yellow-500 hover:bg-yellow-300 p-3 bottom-4 right-4 rounded-lg text-black transition">
+              class="absolute bg-yellow-400 dark:bg-yellow-500 hover:bg-yellow-300 p-3 bottom-4 right-4 rounded-lg text-black transition z-10">
               <span class="sr-only">Send</span>
               <i class="block w-4">
                 <!-- deno-fmt-ignore -->
@@ -79,59 +105,71 @@
               </i>
             </button>
 
-            <div class="absolute bottom-4 left-4">
+            <div class="absolute bg-white bottom-1.5 dark:bg-gray-800 inset-x-4 pb-4">
               <button type="button"
                 onclick="CHAT.toggleProperties('open')"
                 class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg text-gray-400 font-semibold transition"
               >
                 <span class="sr-only">Menu</span>
-                <i class="block w-4">
+                <i class="block w-4 fill-current">
                   <!-- deno-fmt-ignore -->
                   <svg viewBox="0 0 24 24" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><path d="M3 18L21 18L21 16L3 16L3 18ZM3 13L21 13L21 11L3 11L3 13ZM3 6L3 8L21 8L21 6L3 6Z"></path></svg>
                 </i>
               </button>
               <button type="button"
                 onclick="CHAT.toggleModels('open')"
-                class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg text-gray-400 font-semibold transition"
+                title="select model"
+                class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-400 font-semibold transition"
               >
                 <span class="sr-only">Model</span>
-                <i class="block w-4">
-                  <!-- deno-fmt-ignore -->
-                  <svg viewBox="0 0 14 14" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><path d="M12 10C12.2761 10 12.5352 10.0521 12.7773 10.1563C13.0195 10.2604 13.2318 10.4036 13.4141 10.5859C13.5964 10.7682 13.7396 10.9805 13.8438 11.2227C13.9479 11.4648 14 11.7239 14 12C14 12.2761 13.9479 12.5352 13.8438 12.7773C13.7396 13.0195 13.5964 13.2318 13.4141 13.4141C13.2318 13.5964 13.0195 13.7396 12.7773 13.8438C12.5352 13.9479 12.2761 14 12 14C11.7239 14 11.4648 13.9479 11.2227 13.8438C10.9805 13.7396 10.7682 13.5964 10.5859 13.4141C10.4036 13.2318 10.2604 13.0195 10.1563 12.7773C10.0521 12.5352 10 12.2761 10 12C10 11.6302 10.0911 11.2917 10.2734 10.9844L8.01563 8.72656C7.70834 8.90885 7.36979 9 7 9C6.63021 9 6.29167 8.90885 5.98438 8.72656L3.72656 10.9844C3.90885 11.2917 4 11.6302 4 12C4 12.2761 3.94792 12.5352 3.84375 12.7773C3.73958 13.0195 3.59635 13.2318 3.41406 13.4141C3.23177 13.5964 3.01953 13.7396 2.77734 13.8438C2.53515 13.9479 2.27604 14 2 14C1.72396 14 1.46485 13.9479 1.22266 13.8438C0.980473 13.7396 0.768233 13.5964 0.58594 13.4141C0.403647 13.2318 0.260417 13.0195 0.15625 12.7773C0.0520834 12.5352 0 12.2761 0 12C0 11.7239 0.0520834 11.4648 0.15625 11.2227C0.260417 10.9805 0.403647 10.7682 0.58594 10.5859C0.768233 10.4036 0.980473 10.2604 1.22266 10.1563C1.46485 10.0521 1.72396 10 2 10C2.36979 10 2.70834 10.0911 3.01563 10.2734L5.27344 8.01563C5.09115 7.70834 5 7.36979 5 7C5 6.63021 5.09115 6.29167 5.27344 5.98438L3.01563 3.72656C2.70834 3.90885 2.36979 4 2 4C1.72396 4 1.46485 3.94792 1.22266 3.84375C0.980473 3.73958 0.768233 3.59635 0.58594 3.41406C0.403647 3.23177 0.260417 3.01953 0.15625 2.77734C0.0520834 2.53515 0 2.27604 0 2C0 1.72396 0.0520834 1.46485 0.15625 1.22266C0.260417 0.980473 0.403647 0.768233 0.58594 0.58594C0.768233 0.403647 0.980473 0.260417 1.22266 0.15625C1.46485 0.0520834 1.72396 0 2 0C2.27604 0 2.53515 0.0520834 2.77734 0.15625C3.01953 0.260417 3.23177 0.403647 3.41406 0.58594C3.59635 0.768233 3.73958 0.980473 3.84375 1.22266C3.94792 1.46485 4 1.72396 4 2C4 2.36979 3.90885 2.70834 3.72656 3.01563L5.98438 5.27344C6.29167 5.09115 6.63021 5 7 5C7.36979 5 7.70834 5.09115 8.01563 5.27344L10.2734 3.01563C10.0911 2.70834 10 2.36979 10 2C10 1.72396 10.0521 1.46485 10.1563 1.22266C10.2604 0.980473 10.4036 0.768233 10.5859 0.58594C10.7682 0.403647 10.9805 0.260417 11.2227 0.15625C11.4648 0.0520834 11.7239 0 12 0C12.2761 0 12.5352 0.0520834 12.7773 0.15625C13.0195 0.260417 13.2318 0.403647 13.4141 0.58594C13.5964 0.768233 13.7396 0.980473 13.8438 1.22266C13.9479 1.46485 14 1.72396 14 2C14 2.27604 13.9479 2.53515 13.8438 2.77734C13.7396 3.01953 13.5964 3.23177 13.4141 3.41406C13.2318 3.59635 13.0195 3.73958 12.7773 3.84375C12.5352 3.94792 12.2761 4 12 4C11.6302 4 11.2917 3.90885 10.9844 3.72656L8.72656 5.98438C8.90885 6.29167 9 6.63021 9 7C9 7.36979 8.90885 7.70834 8.72656 8.01563L10.9844 10.2734C11.2917 10.0911 11.6302 10 12 10L12 10ZM12 1C11.8594 1 11.7292 1.02604 11.6094 1.07813C11.4896 1.13021 11.3841 1.20182 11.293 1.29297C11.2018 1.38412 11.1302 1.48959 11.0781 1.60938C11.026 1.72917 11 1.85937 11 2C11 2.14063 11.026 2.27084 11.0781 2.39063C11.1302 2.51042 11.2019 2.61588 11.293 2.70703C11.3841 2.79818 11.4896 2.86979 11.6094 2.92188C11.7292 2.97396 11.8594 3 12 3C12.1406 3 12.2708 2.97396 12.3906 2.92188C12.5104 2.86979 12.6159 2.79818 12.707 2.70703C12.7982 2.61588 12.8698 2.51042 12.9219 2.39063C12.974 2.27084 13 2.14063 13 2C13 1.85937 12.974 1.72917 12.9219 1.60938C12.8698 1.48959 12.7981 1.38412 12.707 1.29297C12.6159 1.20182 12.5104 1.13021 12.3906 1.07813C12.2708 1.02604 12.1406 1 12 1L12 1ZM1 2C1 2.14063 1.02604 2.27084 1.07813 2.39063C1.13021 2.51042 1.20182 2.61588 1.29297 2.70703C1.38412 2.79818 1.48959 2.86979 1.60938 2.92188C1.72917 2.97396 1.85937 3 2 3C2.14063 3 2.27084 2.97396 2.39063 2.92188C2.51042 2.86979 2.61588 2.79818 2.70703 2.70703C2.79818 2.61588 2.86979 2.51042 2.92188 2.39063C2.97396 2.27084 3 2.14063 3 2C3 1.85937 2.97396 1.72917 2.92188 1.60938C2.86979 1.48959 2.79818 1.38412 2.70703 1.29297C2.61588 1.20182 2.51042 1.13021 2.39063 1.07813C2.27084 1.02604 2.14063 1 2 1C1.85937 1 1.72917 1.02604 1.60938 1.07813C1.48959 1.13021 1.38412 1.20182 1.29297 1.29297C1.20182 1.38412 1.13021 1.48959 1.07813 1.60938C1.02604 1.72917 1 1.85937 1 2L1 2ZM2 13C2.14063 13 2.27084 12.974 2.39063 12.9219C2.51042 12.8698 2.61588 12.7982 2.70703 12.707C2.79818 12.6159 2.86979 12.5104 2.92188 12.3906C2.97396 12.2708 3 12.1406 3 12C3 11.8594 2.97396 11.7292 2.92188 11.6094C2.86979 11.4896 2.79818 11.3841 2.70703 11.293C2.61588 11.2019 2.51042 11.1302 2.39063 11.0781C2.27084 11.026 2.14063 11 2 11C1.85937 11 1.72917 11.026 1.60938 11.0781C1.48959 11.1302 1.38412 11.2019 1.29297 11.293C1.20182 11.3841 1.13021 11.4896 1.07813 11.6094C1.02604 11.7292 1 11.8594 1 12C1 12.1406 1.02604 12.2708 1.07813 12.3906C1.13021 12.5104 1.20182 12.6159 1.29297 12.707C1.38412 12.7982 1.48959 12.8698 1.60938 12.9219C1.72917 12.974 1.85937 13 2 13L2 13ZM7 8C7.14063 8 7.27084 7.97396 7.39063 7.92188C7.51042 7.86979 7.61588 7.79818 7.70703 7.70703C7.79818 7.61588 7.86979 7.51042 7.92188 7.39063C7.97396 7.27084 8 7.14063 8 7C8 6.85937 7.97396 6.72917 7.92188 6.60938C7.86979 6.48959 7.79818 6.38412 7.70703 6.29297C7.61588 6.20182 7.51042 6.13021 7.39063 6.07813C7.27084 6.02604 7.14063 6 7 6C6.85937 6 6.72917 6.02604 6.60938 6.07813C6.48959 6.13021 6.38412 6.20182 6.29297 6.29297C6.20182 6.38412 6.13021 6.48959 6.07813 6.60938C6.02604 6.72917 6 6.85937 6 7C6 7.14063 6.02604 7.27084 6.07813 7.39063C6.13021 7.51042 6.20182 7.61588 6.29297 7.70703C6.38412 7.79818 6.48959 7.86979 6.60938 7.92188C6.72917 7.97396 6.85937 8 7 8L7 8ZM12 13C12.1406 13 12.2708 12.974 12.3906 12.9219C12.5104 12.8698 12.6159 12.7982 12.707 12.707C12.7982 12.6159 12.8698 12.5104 12.9219 12.3906C12.974 12.2708 13 12.1406 13 12C13 11.8594 12.974 11.7292 12.9219 11.6094C12.8698 11.4896 12.7981 11.3841 12.707 11.293C12.6159 11.2019 12.5104 11.1302 12.3906 11.0781C12.2708 11.026 12.1406 11 12 11C11.8594 11 11.7292 11.026 11.6094 11.0781C11.4896 11.1302 11.3841 11.2019 11.293 11.293C11.2018 11.3841 11.1302 11.4896 11.0781 11.6094C11.026 11.7292 11 11.8594 11 12C11 12.1406 11.026 12.2708 11.0781 12.3906C11.1302 12.5104 11.2019 12.6159 11.293 12.707C11.3841 12.7982 11.4896 12.8698 11.6094 12.9219C11.7292 12.974 11.8594 13 12 13L12 13Z"></path></svg>
-                </i>
+                <i class="block w-6">🧠</i>
               </button>
+              <label type="button"
+                id="modelReasoning"
+                title="reasoning"
+                class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-400 font-semibold transition inline-block hidden"
+              >
+                <input type="hidden" id="hasReasoning" name="hasReasoning" />
+                <input type="checkbox" name="reasoning" value="true" class="model-feature sr-only" />
+                <i class="model-feature-icon block w-6" style="font-style: normal">🤔</i>
+              </label>
+              <label type="button"
+                id="modelWebsearch"
+                title="web search"
+                class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-400 font-semibold transition inline-block hidden"
+              >
+                <input type="hidden" id="hasWebsearch" name="hasWebsearch" />
+                <input type="checkbox" name="websearch" value="true" class="model-feature sr-only" />
+                <i class="model-feature-icon block w-6" style="font-style: normal">🌍</i>
+              </label>
+              <!-- 🪁🎈 send; 🧭 plan -->
             </div>
         </div>
 
-        <div id="models" class="hidden block absolute w-full bottom-0 inset-x-0 bg-gray-200 dark:bg-gray-900 z-10 p-4 rounded-t-2xl">
+        <div id="models" class="hidden block absolute w-full bottom-0 inset-x-0 bg-gray-200 dark:bg-gray-900 z-10 p-4 pt-0 rounded-t-2xl max-h-[50vh] overflow-y-auto">
           <div class="relative max-w-2xl mx-auto w-full">
-            <div class="table w-full text-gray-700 text-sm font-bold mb-2 dark:text-gray-400">
+            <div class="table w-full text-gray-700 font-bold pt-4 pb-2 bg-gray-200 dark:bg-gray-900 dark:text-gray-400 sticky top-0 z-10">
               <p class="table-cell">Choose a model</p>
-              <div class="table-cell w-24 text-right">
-                <div class="inline-block border border-black rounded block font-semibold dark:border-gray-400 divide-x divide-black">
-                  <button class="px-1" id="models-load" onclick="CHAT.loadModels()">Load</button>
-                  <button class="px-1" id="models-close" onclick="CHAT.toggleModels('close')">Close</button>
+              <div class="table-cell w-24 text-right text-sm">
+                <div class="inline-block border border-black rounded block font-semibold dark:border-gray-400 divide-x divide-black dark:divide-gray-400">
+                  <button type="button" class="px-1" id="models-load" onclick="CHAT.loadModels()">Load</button>
+                  <button type="button" class="px-1" id="models-close" onclick="CHAT.toggleModels('close')">Close</button>
                 </div>
               </div>
             </div>
-            <div id="models-container" class="bg-white dark:bg-gray-800 w-full border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none mb-2 divide-y dark:divide-gray-700 max-h-[50vh] overflow-y-auto">
+            <div id="models-container" class="bg-white dark:bg-gray-800 w-full border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none mb-2 divide-y dark:divide-gray-700">
               <!-- #TODO: loop through /models appending response -->
-              <label class="table w-full p-4">
+              <label id="model-template" class="table w-full p-4">
                 <div class="table-cell align-middle w-12">
-                  <input type="radio" name="model" value="default"/>
+                  <input type="radio" name="model" value="default" class="modelInput" />
                 </div>
-                <div class="table-cell">
-                  <h3 class="block font-semibold">Default</h3>
-                  <a class="block">Default description</a>
-                </div>
-              </label>
-              <label id="model-template" class="hidden table w-full p-4">
-                <div class="table-cell align-middle w-12">
-                  <input type="radio" name="model" value="$MODEL_ID"/>
-                </div>
-                <div class="table-cell">
-                  <h3 class="block font-semibold">$MODEL_ID</h3>
-                  <a class="block">$MODEL_LINK</a>
+                <div class="table-cell relative">
+                  <h3 class="block font-semibold">
+                    <span class="modelName">Default</span>
+                    <span class="modelCapabilities text-xs hidden"></span>
+                  </h3>
+                  <span class="modelId block">default</span>
+                  <a class="modelLink block absolute bottom-1 right-2 p-2 bg-yellow-400/30 rounded-full">🔗</a>
                 </div>
               </label>
             </div>
@@ -141,196 +179,375 @@
 
     <script>
       (function() {
+        const loading = document.getElementById('loading');
         const storagePrefix = "0xkuz/chat/";
         const settingsPrefix = `${storagePrefix}settings/`
-        const settings = { API_KEY: null, PROXY: null, MODEL: "default" };
-
+        const settings = { API_KEY: null, ENDPOINT: null, PROXY: "", MODEL: null };
+    
         // Check if API key is saved in local storage
-        for (const [property, value] of Object.entries(settings)) {
-          if (value) continue;
-
-          if (localStorage.getItem(`${settingsPrefix}${property}`)) {
-            settings[property] = localStorage.getItem(`${settingsPrefix}${property}`);
+        for (const [property, value] of Object.entries(settings).slice(0, 2)) {
+          const data = getLocalStorage(property);
+          
+          if (data) {
+            settings[property] = data;
           } else {
+            if (property === "MODEL") {
+              settings.MODEL = "default";
+              continue;
+            }
+
             toggleProperties("open");
             break;
           }
         }
-
+    
         // Save API key to local storage and hide the form
         document.getElementById('propertiesForm').addEventListener('submit', function saveProperties(event) {
           event.preventDefault();
+          const fd = new FormData(event.target);
+          const properties = ["api_key", "endpoint", "proxy"];
 
-          // /** @type {HTMLFormElement} */
-          // const propertiesForm = this;
-          // propertiesForm.noValidate = true;
-
-          // if (event.submitter.name === "close") {
-          //   propertiesForm.noValidate = false;
-          // }
-
-          if (event.submitter.name === "save") {
-            const fd = new FormData(event.target);
-  
-            console.log({fd});
-
-            settings.API_KEY = fd.get('api_key').trim();
-            settings.PROXY = fd.get('proxy').trim();
-  
-            // localStorage.setItem(`${settingsPrefix}/API_KEY`, settings.API_KEY);
-            // localStorage.setItem(`${settingsPrefix}/PROXY`, settings.PROXY);
-  
-            localStorage.setItem(`${settingsPrefix}API_KEY`, (settings.API_KEY = fd.get('api_key').trim()));
-            localStorage.setItem(`${settingsPrefix}PROXY`, (settings.PROXY = fd.get('proxy').trim()));
-          }
-
+          properties.forEach(property => {
+            const PROPERTY = property.toUpperCase();
+            settings[PROPERTY] = fd.get(property).trim();
+            setLocalStorage(`${PROPERTY}`, settings[PROPERTY]);
+          });
+    
           toggleProperties("close");
         });
-
-        document.getElementById('chatForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const messageInput = document.getElementById('messageInput');
-            const message = messageInput.value.trim();
-            if (!message) return;
-
-            addMessage('user', message);
-            messageInput.value = '';
-
-            try {
-                const response = await aiCall(message);
-                addMessage('ai', response);
-            } catch (error) {
-                addMessage('ai', '**Error:** Could not get response');
-                console.error(error);
-            }
-
-            document.getElementById('chatContainer').scrollTop = document.getElementById('chatContainer').scrollHeight;
+        
+        const messageInput = document.getElementById('messageInput');
+        messageInput.addEventListener("input", function changeMessageInputHeight(e) {
+          messageInput.rows = ((messageInput.value.split("\n").length - 1) || 1) + 1 
         });
+    
+        const chatForm = document.getElementById('chatForm');
+        chatForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          const fd = new FormData(e.target);
+          const message = fd.get("message");
+          const formValues = Object.fromEntries(fd.entries());
+          // const feature_suffix = `:${reasoning}&${websearch}`.replace(":&", ":");
+          const featureSuffixParts = [];
+          formValues.hasReasoning === "true" && formValues.reasoning !== "true" && featureSuffixParts.push("disable_thinking=true");
+          formValues.hasWebsearch === "true" && formValues.websearch === "true" && featureSuffixParts.push("enable_web_search=on&enable_web_citations=true");
 
+          if (!message) return;
+
+          settings.MODEL = (fd.get("model") ?? settings.MODEL ?? "default") + ((featureSuffixParts.length && `:${featureSuffixParts.join("&")}`) || "");
+          // setLocalStorage(`MODEL`, settings.MODEL);
+
+          addMessage('user', message);
+          messageInput.value = '';
+          messageInput.rows = 2;
+
+          const h = document.getElementById('chatContainer').scrollHeight;
+    
+          try {
+            loading.parentElement.appendChild(loading);
+            loading.classList.remove("hidden");
+            window.scrollTo(0, h);
+
+            const response = await aiCall(message);
+            addMessage('ai', response);
+          } catch (error) {
+            addMessage('ai', '**Error:** Could not get response');
+            console.error(error);
+          } finally {
+            loading.classList.add("hidden");
+            window.scrollTo(0, h + 50);
+          }
+        });
+    
         function addMessage(sender, message) {
-            /** @type {HTMLElement} */
-            const template = document.getElementById('messageTemplate').cloneNode(true);
-            template.classList.remove('hidden');
+          const template = document.getElementById('messageTemplate').cloneNode(true);
+          const messageText = template.querySelector('.message-text');
+          const time = (new Date()).toISOString();
+          template.id = "message-" + time.replace(/[^a-z0-9]/ig, "");
+          template.classList.remove('hidden');
+    
+          const isUser = sender === 'user';
+    
+          messageText.id = template.id.replace("-", "-content-");
+          messageText.textContent = message;
+    
+          const copyBtn = template.querySelector('.message-copy-btn');
+          // copyBtn.setAttribute("onclick", "CHAT.copyMessage('ID', this)".replace("ID", messageText.id.replace(/.+\-([a-z0-9]+)$/i, "$1")));
+          copyBtn.setAttribute("data-id", messageText.id.replace(/.+\-([a-z0-9]+)$/i, "$1"));
+          copyBtn.addEventListener("click", copyMessage);
 
-            const isUser = sender === 'user';
-
-            // Set the message content
-            template.querySelector('.message-text').textContent = message;
-
-            // Set sender-specific classes, names, and backgrounds
-            template.querySelector('.sender-avatar').classList.remove(isUser? 'bg-gray-300': 'bg-yellow-400');
-            template.querySelector('.sender-avatar').textContent = isUser? 'Me': 'AI';
-            template.querySelector('.sender-name').textContent = isUser? 'Me': 'AI Assistant';
-
-            document.getElementById('chatContainer').appendChild(template);
+          template.querySelector('.sender-avatar').classList.remove(isUser? 'bg-gray-300': 'bg-yellow-400');
+          template.querySelector('.sender-avatar').textContent = isUser? 'Me': 'AI';
+          template.querySelector('.sender-name').textContent = isUser? 'Me': settings.MODEL || 'AI Assistant';
+    
+          document.getElementById('chatContainer').appendChild(template);
         }
-
+    
         async function aiCall(query) {
-            if (!settings.API_KEY) {
-                throw new Error('API key is missing');
-            }
+          if (!settings.API_KEY) {
+            throw new Error('API key is missing');
+          }
 
-            // /*
-            const options = {
-                method: 'POST',
-                headers: {Authorization: 'Bearer <token>', 'Content-Type': 'application/json'},
-                body: JSON.stringify({"model":"llama-3.3-70b","messages":[{"role":"user","content":"<string>"}],"venice_parameters":{"enable_web_search":"auto","include_venice_system_prompt":true,"character_slug":"venice"},"frequency_penalty":0,"presence_penalty":0,"repetition_penalty":1.2,"n":1,"max_tokens":123,"max_temp":1.5,"min_temp":0.1,"max_completion_tokens":123,"temperature":0.7,"top_k":40,"top_p":0.9,"min_p":0.05,"stop":"<string>","stop_token_ids":[151643,151645],"stream":true,"stream_options":{"include_usage":true},"user":"<string>","parallel_tool_calls":false,"tools":[{"id":"<string>","type":"<string>","function":{"description":"<string>","name":"<string>","parameters":{}}}],"tool_choice":{"type":"<string>","function":{"name":"<string>"}},"response_format":{"type":"json_schema","json_schema":{"type":"object","properties":{"name":{"type":"string"},"age":{"type":"number"}},"required":["name","age"]}}})
-            };
-            // */
-
-            const response = await fetch(settings.PROXY + 'https://api.venice.ai/api/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${settings.API_KEY}`
-                },
-                body: JSON.stringify({
-                    "model": settings.MODEL,
-                    "messages": [{role: "user", content: query}],
-                    // "max_tokens": 150
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-            return data.choices[0].message.content.trim();
+          const modelType = getLocalStorage("MODEL_TYPE") || "text";
+    
+          const response = await fetch(settings.PROXY + settings.ENDPOINT, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${settings.API_KEY}`
+            },
+            body: JSON.stringify({
+              "model": settings.MODEL,
+              "messages": [{role: "user", content: query}],
+              // think: false, // #TODO: find way to stop model from thinking
+              stream: false,
+            })
+          });
+    
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+    
+          const data = await response.json();
+          return data.choices[0].message.content.trim();
         }
-
+    
         function toggleProperties(state = "open") {
           const op = state === "open"? "remove": "add";
-          /** @type {HTMLFormElement} */
           const propertiesForm = document.getElementById('propertiesForm');
-          const properties = ["api_key", "proxy"];
-
+          const properties = ["api_key", "endpoint", "proxy"];
+    
           properties.forEach(property => (
-            propertiesForm.querySelector(`[name="${property}"]`).value = localStorage.getItem(`${settingsPrefix}${property.toUpperCase()}`)
+            propertiesForm.querySelector(`[name="${property}"]`).value = getLocalStorage(property.toUpperCase())
           ));
-
+    
           propertiesForm.classList[op]('hidden');
         }
-
+    
         function toggleModels(state = "open") {
           const op = state === "open"? "remove": "add";
-          /** @type {HTMLFormElement} */
           const models = document.getElementById('models');
           const properties = ["model"];
 
-          properties.forEach(property => (
-            models.querySelector(`[name="${property}"]`).value = localStorage.getItem(`${settingsPrefix}${property.toUpperCase()}`)
-          ));
+          if (state === "open") {
+            const selected = models.querySelector(`[value="${settings.MODEL}"]`);
 
+            if (selected) selected.checked = true;
+          }
+    
           models.classList[op]('hidden');
         }
-
+    
         function loadModels() {
           const options = { method: 'GET', headers: { Authorization: `Bearer ${settings.API_KEY}` } };
-
-          fetch(settings.PROXY + 'https://api.venice.ai/api/v1/models?type=all', options)
+    
+          fetch(settings.PROXY + `${settings.ENDPOINT.replace("chat/completions", "models")}?type=all`, options)
             .then(response => response.json())
             .then(response => {
               const data = response.data.map(m => {
                 m.created = (new Date(m.created * 1000)).toISOString();
                 return m;
               });
-
-              localStorage.setItem(`${settingsPrefix}MODELS`, JSON.stringify(data));
-
-              // Get the models container
-              const modelsContainer = document.querySelector('#models-container');
-
-              // Clear existing models
-              // modelsContainer.innerHTML = '';
-
-              // Add default model template
-              const defaultModel = document.querySelector('#model-template').cloneNode(true);
-              defaultModel.classList.remove('hidden');
-              modelsContainer.appendChild(defaultModel);
-
-              // Loop over the data and create a new label for each model
-              data.forEach(model => {
-                const modelLabel = document.querySelector('#model-template').cloneNode(true);
-                modelLabel.id = model.id; // make sure each model has a unique ID
-                modelLabel.classList.remove('hidden');
-                modelLabel.querySelector('input[name="model"]').value = model.id;
-                modelLabel.querySelector('h3').textContent = model.id;
-                modelLabel.querySelector('a').textContent = model.id; // or you could use a more descriptive property
-                modelsContainer.appendChild(modelLabel);
-              });
+    
+              setLocalStorage(`MODELS`, JSON.stringify(data));
+              renderModels(data);
             })
             .catch(err => console.error(err));
         }
 
+        const capabilities = {
+          "optimizedForCode": "👨🏾‍💻",
+          "supportsFunctionCalling": "", // "🛠",
+          "supportsReasoning": "🤔",
+          "supportsResponseSchema": "", // "📜",
+          "supportsVision": "👀",
+          "supportsWebSearch": "🌍",
+          "supportsLogProbs": "", // "🎱",
+          "image": "🖼",
+          "text": "",
+          "tts": "🗣",
+          "upscale": "↕",
+          "video": "📽",
+        };
+
+        /**
+         * Function to render models in modelsContainer
+         * 
+         * @param {Array|null} models 
+         */
+        function renderModels(models) {
+          models = models || [];
+          const selectedModel = getLocalStorage("MODEL");
+          const $modelsContainer = document.querySelector('#models-container');
+          const modelsContainer = $modelsContainer.cloneNode(true);
+          modelsContainer.innerHTML = ''; // Clear existing content
+    
+          const defaultModel = $modelsContainer.querySelector('#model-template').cloneNode(true);
+
+          if (!models || (models.length < 1)) {
+            modelsContainer.appendChild(defaultModel);
+          }
+
+          models.forEach((model) => {
+            const modelLabel = defaultModel.cloneNode(true);
+            const modelSource = model && model.model_spec && model.model_spec.modelSource;
+            /** @type {HTMLInputElement} */
+            const modelInput = modelLabel.querySelector(".modelInput");
+            modelLabel.id = model.id;
+
+            modelInput.value = model.id;
+
+            if (selectedModel && selectedModel === model.id) modelInput.checked = true;
+            
+            modelLabel.querySelector(".modelName").textContent = (modelSource && modelSource.includes("huggingface.co") && modelSource.split("/").pop()) || model.id;
+            modelLabel.querySelector(".modelId").textContent = model.id;
+
+            /** @type {HTMLAnchorElement} */
+            const modelLink = modelLabel.querySelector('.modelLink');
+
+            if (modelSource) {
+              modelLink.href = modelSource;
+            } else {
+              modelLink.parentElement.removeChild(modelLink);
+            }
+
+            const modelCapabilitiesContent = (
+              (capabilities[model.type] || "") +
+              Object.entries((model && model.model_spec && model.model_spec.capabilities) || {})
+                .filter(([_k,v]) => typeof v === "boolean" && v)
+                .map(([k, v]) => (capabilities[k]))
+                .join("")
+            );
+            /** @type {HTMLSpanElement} */
+            const modelCapabilities = (
+              modelLabel.querySelector(".modelCapabilities")
+            );
+
+            if (modelCapabilitiesContent) {
+              modelCapabilities.textContent = modelCapabilitiesContent;
+              modelCapabilities.classList.remove("hidden");
+            } else {
+              modelCapabilities.parentElement.removeChild(modelCapabilities);
+            }
+
+            modelsContainer.appendChild(modelLabel);
+          });
+
+          // console.log({p: $modelsContainer.parentElement, $modelsContainer, modelsContainer})
+          // $modelsContainer.parentElement.replaceChild($modelsContainer, modelsContainer);
+          $modelsContainer.replaceWith(modelsContainer);
+        }
+
+        function renderTools(modelId) {
+          /** @type {Array} */
+          const models = getLocalStorage("MODELS", true) || [];
+          
+          if (models && models.length && modelId) {
+            const model = models.find(m => m.id === modelId);
+            console.log(model);
+
+            if (model) {
+              if (model.model_spec && model.model_spec.capabilities) {
+                /** @type {HTMLLabelElement} */
+                const modelReasoning = document.getElementById("modelReasoning");
+                /** @type {HTMLInputElement} */
+                const reasoningInput = modelReasoning.querySelector("[name=reasoning]");
+                /** @type {HTMLLabelElement} */
+                const modelWebsearch = document.getElementById("modelWebsearch");
+                /** @type {HTMLInputElement} */
+                const websearchInput = modelWebsearch.querySelector("[name=websearch]");
+                
+                modelReasoning.classList[model.model_spec.capabilities.supportsReasoning? "remove": "add"]("hidden");
+                modelReasoning.disabled = ! model.model_spec.capabilities.supportsReasoning;
+                reasoningInput.checked = model.model_spec.capabilities.supportsReasoning;
+                document.getElementById("hasReasoning").value = model.model_spec.capabilities.supportsReasoning;
+
+                modelWebsearch.classList[model.model_spec.capabilities.supportsWebSearch? "remove": "add"]("hidden");
+                modelWebsearch.disabled = ! model.model_spec.capabilities.supportsWebSearch;
+                websearchInput.checked = model.model_spec.capabilities.supportsWebSearch;
+                document.getElementById("hasWebsearch").value = model.model_spec.capabilities.supportsWebSearch;
+              }
+
+              if (model.id) setLocalStorage("MODEL", model.id);
+              if (model.type) setLocalStorage("MODEL_TYPE", model.type);
+            }
+          }
+        }
+    
+        /**
+         * Function to load data from local storage
+         * 
+         * @param {keyof settings | "MODELS"} key 
+         * @param {boolean} [parse=false] 
+         */
+        function getLocalStorage(key, parse = false) {
+          const value = localStorage.getItem(`${settingsPrefix}${key}`);
+
+          if (parse) {
+            try {
+              return JSON.parse(value);
+            } catch (_e) {}
+          } else {
+            return value
+          }
+
+          return null;
+        }
+
+        /**
+         * Function to load data from local storage
+         * 
+         * @param {keyof settings | "MODELS"} key 
+         */
+        function setLocalStorage(key, value) {
+          localStorage.setItem(`${ settingsPrefix}${key}`, value);
+         }
+
+        // async function copyMessage(id, $el) {
+        function copyMessage(event) {
+          const $el = event.target, id = $el.dataset.id;
+          const $message = document.getElementById("message-content-" + id);
+
+          if ($message) {
+            const text = $el.textContent;
+            navigator.clipboard.writeText($message.textContent)
+              .then(() => {
+                // console.log($el);
+                $el.textContent = "✔ Copied";
+
+                setTimeout(() => { 
+                  $el.textContent = text;
+                }, 5000);
+              })
+              .catch((e) => alert(e))
+          }
+        }
+    
+        // Call loadModelsFromLocalStorage when the document is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+          chatForm.addEventListener("change", function onChatFormChange(e) {
+            const target = e.target;
+
+            // Model changed
+            if (target && target.className === "modelInput") {
+              renderTools(target.value);
+            }
+          });
+
+          renderModels(getLocalStorage("MODELS", true));
+          renderTools(getLocalStorage("MODEL"));
+        });
+    
         // exports
         window.CHAT = {
           toggleProperties,
           toggleModels,
           loadModels,
+          copyMessage,
         };
       })();
     </script>
+    
     <script id="build">
       (function () {
         const url = new URLSearchParams(window.location.search)
@@ -351,15 +568,22 @@
               (s.id === "build" || s.id === "tailwindcss") &&
               s.parentElement.removeChild(s)
             ));
-            // console.log(document.childNodes[0])
             const html = ["<!DOCTYPE html>", document.children[0].outerHTML].join("\n");
             const blob = new Blob([html], { type:"text/html" });
-            const link = `<a href="${URL.createObjectURL(blob)}" download="CHAT.html" class="bg-yellow-400 text-black p-4 font-bold">Download HTML</a>`;
+            const link = `<a href="${URL.createObjectURL(blob)}" download="CHAT.html" class="bg-yellow-400 text-black p-4 font-bold z-10">Download HTML</a>`;
             document.body.innerHTML += link;
           }
         }
       })()
     </script>
+    <style>
+      .model-feature + .model-feature-icon { opacity: .75; filter: grayscale(1); }
+      .model-feature:checked + .model-feature-icon { opacity: 1; filter: grayscale(0); }
+      @keyframes thinking {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.25); }
+      }
+    </style>
 </body>
 
 </html>
