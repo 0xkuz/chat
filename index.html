@@ -7,7 +7,7 @@
     <script id="tailwindcss" src="tailwindcss-3.4.14.js"></script>
   </head>
 
-  <body class="bg-gray-100 dark:bg-gray-950 text-gray-600 dark:text-gray-200 h-screen flex flex-col">
+  <body class="bg-gray-100 dark:bg-gray-950 text-gray-600 dark:text-gray-200">
     <form
       id="propertiesForm"
       class="hidden bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 fixed inset-x-0 inset-y-0 p-4 shadow-lg z-20"
@@ -24,7 +24,7 @@
             name="api_key"
             type="text"
             required
-            class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
+            class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
           />
         </label>
         <label class="block relative">
@@ -48,7 +48,7 @@
             name="endpoint"
             type="url"
             required
-            class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
+            class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
           />
           <!-- <span class="r absolute border border-green-400 px-1 r right-3 rounded-sm text-green-400 text-xs top-10">recommended</span> -->
         </label>
@@ -66,7 +66,7 @@
           <input
             name="proxy"
             type="url"
-            class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
+            class="bg-gray-50 dark:bg-gray-800 dark:border-gray-700 w-full h-10 p-4 border rounded-lg outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
           />
           <!-- <span class="r absolute border border-green-400 px-1 r right-3 rounded-sm text-green-400 text-xs top-10">recommended</span> -->
         </label>
@@ -74,14 +74,14 @@
           <button
             type="submit"
             name="save"
-            class="bg-yellow-400 dark:bg-yellow-500 text-black font-semibold px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 hover:bg-yellow-300 transition focus:bg-yellow-500/90 mt-2"
+            class="bg-yellow-400 dark:bg-yellow-500 text-black font-semibold px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-yellow-400 hover:bg-yellow-300 transition focus:bg-yellow-500/90 mt-2"
           >
             Save Settings
           </button>
           <button
             type="submit"
             name="close"
-            class="bg-transparent text-black dark:text-white font-semibold px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 transition mt-2"
+            class="bg-transparent text-black dark:text-white font-semibold px-4 py-2 rounded-lg outline-none focus:ring-2 focus:ring-yellow-400 transition mt-2"
           >
             Close
           </button>
@@ -89,7 +89,7 @@
       </div>
     </form>
 
-    <div class="flex-1 p-4 pb-56 w-full">
+    <div class="block p-4 pb-56 w-full">
       <div id="chatContainer" class="space-y-4 max-w-2xl mx-auto w-full">
         <!-- Reusable message template -->
         <div
@@ -134,131 +134,139 @@
           id="messageInput"
           name="message"
           placeholder="What you wanna do?"
-          class="bg-white dark:bg-gray-800 dark:border-gray-700 w-full max-h-[50vh] p-4 pb-16 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none dark:text-gray-200"
+          class="bg-white dark:bg-gray-800 dark:border-gray-700 w-full max-h-[50vh] p-4 pb-16 border rounded-lg outline-none focus:ring-2 focus:ring-yellow-400 resize-none dark:text-gray-200"
           rows="2"
         ></textarea>
 
-        <button
-          type="submit"
-          class="absolute bg-yellow-400 dark:bg-yellow-500 hover:bg-yellow-300 p-3 bottom-4 right-4 rounded-lg text-black transition z-10"
-        >
-          <span class="sr-only">Send</span>
-          <i class="block w-4">
-            <!-- deno-fmt-ignore -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M9.68548 1L21 9.90947L21 12.8794L9.68548 22L7.37131 19.9L14.9455 12.8796L3 12.8794L3 9.90947L14.9455 9.90972L7.3713 3.10004L9.68548 1L9.68548 1Z"/></g></svg>
-          </i>
-        </button>
-
-        <div class="absolute bg-white bottom-1.5 dark:bg-gray-800 inset-x-4 pb-4">
-          <button
-            type="button"
-            onclick="CHAT.toggleProperties('open')"
-            class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg text-gray-400 font-semibold transition"
-          >
-            <span class="sr-only">Menu</span>
-            <i class="block w-4 fill-current">
-              <!-- deno-fmt-ignore -->
-              <svg viewBox="0 0 24 24" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><path d="M3 18L21 18L21 16L3 16L3 18ZM3 13L21 13L21 11L3 11L3 13ZM3 6L3 8L21 8L21 6L3 6Z"></path></svg>
-            </i>
-          </button>
-          <button
-            type="button"
-            onclick="CHAT.toggleModels('open')"
-            title="select model"
-            class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-400 font-semibold transition"
-          >
-            <span class="sr-only">Model</span>
-            <i class="block w-6">🧠</i>
-          </button>
-          <label
-            type="button"
-            id="modelReasoning"
-            title="reasoning"
-            class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-400 font-semibold transition inline-block hidden"
-          >
-            <input type="hidden" id="hasReasoning" name="hasReasoning" />
-            <input
-              type="checkbox"
-              name="reasoning"
-              value="true"
-              class="model-feature sr-only"
-            />
-            <i class="model-feature-icon block w-6" style="font-style: normal"
-            >🤔</i>
-          </label>
-          <label
-            type="button"
-            id="modelWebsearch"
-            title="web search"
-            class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg text-gray-400 font-semibold transition inline-block hidden"
-          >
-            <input type="hidden" id="hasWebsearch" name="hasWebsearch" />
-            <input
-              type="checkbox"
-              name="websearch"
-              value="true"
-              class="model-feature sr-only"
-            />
-            <i class="model-feature-icon block w-6" style="font-style: normal"
-            >🌍</i>
-          </label>
-          <!-- 🪁🎈 send; 🧭 plan -->
+        <div class="absolute bg-white dark:bg-gray-800 text-black dark:text-white bottom-1.5 border-b-4 border-transparent inset-x-4 pb-4 rounded-t-lg">
+          <div class="relative h-10 w-full">
+            <button
+              type="submit"
+              class="absolute bg-yellow-400 dark:bg-yellow-500 hover:bg-yellow-300 p-3 top-0 right-0 z-10 rounded-lg transition outline-none focus:ring-2 focus:ring-current"
+            >
+              <span class="sr-only">Send</span>
+              <i class="block w-4">
+                <!-- deno-fmt-ignore -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M9.68548 1L21 9.90947L21 12.8794L9.68548 22L7.37131 19.9L14.9455 12.8796L3 12.8794L3 9.90947L14.9455 9.90972L7.3713 3.10004L9.68548 1L9.68548 1Z"/></g></svg>
+              </i>
+            </button>
+            <button
+              type="button"
+              onclick="CHAT.toggleProperties('open', this)"
+              class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg font-semibold transition"
+            >
+              <span class="sr-only">Menu</span>
+              <i class="block w-4 fill-current">
+                <!-- deno-fmt-ignore -->
+                <svg viewBox="0 0 24 24" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><path d="M3 18L21 18L21 16L3 16L3 18ZM3 13L21 13L21 11L3 11L3 13ZM3 6L3 8L21 8L21 6L3 6Z"></path></svg>
+              </i>
+            </button>
+            <button
+              type="button"
+              onclick="CHAT.toggleModels('open')"
+              title="select model"
+              class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg font-semibold transition focus:ring-2 focus:ring-current"
+            >
+              <span class="sr-only">Model</span>
+              <i class="block w-6">🧠</i>
+            </button>
+            <label
+              type="button"
+              id="modelReasoning"
+              title="reasoning"
+              class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg font-semibold transition inline-block focus-within:ring-2 focus-within:ring-current hidden"
+            >
+              <input type="hidden" id="hasReasoning" name="hasReasoning" />
+              <input
+                type="checkbox"
+                name="reasoning"
+                value="true"
+                class="model-feature sr-only"
+              />
+              <i class="model-feature-icon block w-6" style="font-style: normal"
+              >🤔</i>
+            </label>
+            <label
+              type="button"
+              id="modelWebsearch"
+              title="web search"
+              class="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg font-semibold transition inline-block focus-within:ring-2 focus-within:ring-current hidden"
+            >
+              <input type="hidden" id="hasWebsearch" name="hasWebsearch" />
+              <input
+                type="checkbox"
+                name="websearch"
+                value="true"
+                class="model-feature sr-only"
+              />
+              <i class="model-feature-icon block w-6" style="font-style: normal"
+              >🌍</i>
+            </label>
+            <!-- 🪁🎈 send; 🧭 plan -->
+          </div>
         </div>
       </div>
 
       <div
         id="models"
-        class="hidden block absolute w-full bottom-0 inset-x-0 bg-gray-200 dark:bg-gray-900 z-10 p-4 pt-0 rounded-t-2xl max-h-[50vh] overflow-y-auto"
+        class="hidden block fixed h-full max-h-[65vh] w-full bottom-0 inset-x-0 bg-gray-200 dark:bg-gray-900 overflow-hidden rounded-t-2xl z-10"
       >
-        <div class="relative max-w-2xl mx-auto w-full">
-          <div class="table w-full text-gray-700 font-bold pt-4 pb-2 bg-gray-200 dark:bg-gray-900 dark:text-gray-400 sticky top-0 z-10">
-            <p class="table-cell">Choose a model</p>
-            <div class="table-cell w-24 text-right text-sm">
-              <div class="inline-block border border-black rounded block font-semibold dark:border-gray-400 divide-x divide-black dark:divide-gray-400">
-                <button
-                  type="button"
-                  class="px-1"
-                  id="models-load"
-                  onclick="CHAT.loadModels()"
-                >
-                  Load
-                </button>
-                <button
-                  type="button"
-                  class="px-1"
-                  id="models-close"
-                  onclick="CHAT.toggleModels('close')"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
+        <div class="block absolute top-0 bg-gray-200 dark:bg-gray-900 font-semibold p-4 w-full">
+          <div class="relative max-w-2xl mx-auto w-full">
+            Choose a model
           </div>
-          <div
-            id="models-container"
-            class="bg-white dark:bg-gray-800 w-full border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none mb-2 divide-y dark:divide-gray-700"
-          >
-            <!-- #TODO: loop through /models appending response -->
-            <label id="model-template" class="table w-full p-4">
-              <div class="table-cell align-middle w-12">
-                <input
-                  type="radio"
-                  name="model"
-                  value="default"
-                  class="modelInput"
-                />
-              </div>
-              <div class="table-cell relative">
-                <h3 class="block font-semibold">
-                  <span class="modelName">Default</span>
-                  <span class="modelCapabilities text-xs hidden"></span>
-                </h3>
-                <span class="modelId block">default</span>
-                <a
-                  class="modelLink block absolute bottom-1 right-2 p-2 bg-yellow-400/30 rounded-full"
-                >🔗</a>
-              </div>
-            </label>
+        </div>
+
+        <div class="block absolute bottom-0 bg-gray-200 dark:bg-gray-900 font-semibold p-4 w-full">
+          <div class="relative max-w-2xl mx-auto w-full text-black">
+            <button
+              type="button"
+              class="inline-block px-4 py-2 outline-none focus:ring-2 focus:ring-yellow-400 rounded-lg bg-yellow-400 dark:bg-yellow-500"
+              id="models-load"
+              onclick="CHAT.loadModels()"
+            >
+              Load
+            </button>
+            <button
+              type="button"
+              class="inline-block px-4 py-2 outline-none focus:ring-2 focus:ring-yellow-400 rounded-lg dark:text-white"
+              id="models-close"
+              onclick="CHAT.toggleModels('close')"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+
+        <div class="block absolute bottom-20 top-14 overflow-y-auto px-4 w-full">
+          <div class="relative max-w-2xl mx-auto w-full">
+            <div
+              id="models-container"
+              class="bg-white dark:bg-gray-800 w-full border dark:border-gray-700 rounded-lg outline-none focus:ring-2 focus:ring-yellow-400 my-4 divide-y dark:divide-gray-700"
+            >
+              <label id="model-template" class="table w-full p-4">
+                <div class="table-cell align-middle w-12">
+                  <input
+                    type="radio"
+                    name="model"
+                    value="default"
+                    class="modelInput"
+                  />
+                </div>
+                <div class="table-cell relative">
+                  <h3 class="block font-semibold">
+                    <span
+                      class="modelName inline-block leading-none max-w-36 overflow-hidden text-ellipsis whitespace-pre"
+                    >Default</span>
+                    <span class="modelCapabilities hidden"></span>
+                  </h3>
+                  <span class="modelId block">default</span>
+                  <a
+                    class="modelLink block absolute bottom-1 right-2 p-2 bg-yellow-400/30 rounded-full"
+                  >🔗</a>
+                </div>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -457,6 +465,13 @@
           ));
 
           propertiesForm.classList[op]("hidden");
+
+          if (state === "open") {
+            propertiesForm.tabIndex = 0;
+            propertiesForm.focus();
+          } else {
+            propertiesForm.tabIndex = -1;
+          }
         }
 
         function toggleModels(state = "open") {
