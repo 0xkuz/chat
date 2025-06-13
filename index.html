@@ -72,12 +72,12 @@
                 <div class="flex flex-col items-start w-full">
                     <div class="flex items-center mb-1">
                         <div class="sender-avatar size-12 inline-block rounded-full p-2 mr-2 overflow-hidden align-middle bg-gray-300 bg-yellow-400 text-center text-gray-700 leading-[2em]">Sender</div>
-                        <span class="sender-name font-semibold">Sender Name</span>
+                        <span class="sender-name font-semibold whitespace-pre max-w-36 overflow-hidden text-ellipsis">Sender Name</span>
                         <div class="ml-4">
                           <button class="message-copy-btn bg-white/80 dark:bg-gray-800/70 leading-none px-4 py-3 rounded-xl text-sm">📋 Copy</button>
                         </div>
                     </div>
-                    <div class="message-content bg-white dark:bg-gray-800 p-3 rounded-lg">
+                    <div class="message-content p-3 rounded-lg">
                         <div class="message-text text-gray-600 dark:text-gray-200 whitespace-pre-wrap break-all">Message Content</div>
                     </div>
                 </div>
@@ -277,6 +277,7 @@
           copyBtn.addEventListener("click", copyMessage);
 
           template.querySelector('.sender-avatar').classList.remove(isUser? 'bg-gray-300': 'bg-yellow-400');
+          template.querySelector(".message-content").className += isUser? " bg-white dark:bg-gray-800": "";
           template.querySelector('.sender-avatar').textContent = isUser? 'Me': 'AI';
           template.querySelector('.sender-name').textContent = isUser? 'Me': settings.MODEL || 'AI Assistant';
     
