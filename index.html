@@ -341,14 +341,17 @@
           const formValues = Object.fromEntries(fd.entries());
           // const feature_suffix = `:${reasoning}&${websearch}`.replace(":&", ":");
           const featureSuffixParts = [];
-          formValues.hasReasoning === "true" &&
-            formValues.reasoning !== "true" &&
-            featureSuffixParts.push("disable_thinking=true");
-          formValues.hasWebsearch === "true" &&
-            formValues.websearch === "true" &&
-            featureSuffixParts.push(
-              "enable_web_search=on&enable_web_citations=true",
-            );
+
+          if (/venice/.test(settings.ENDPOINT)) {
+            formValues.hasReasoning === "true" &&
+              formValues.reasoning !== "true" &&
+              featureSuffixParts.push("disable_thinking=true");
+            formValues.hasWebsearch === "true" &&
+              formValues.websearch === "true" &&
+              featureSuffixParts.push(
+                "enable_web_search=on&enable_web_citations=true",
+              );
+          }
 
           if (!message) return;
 
@@ -375,6 +378,7 @@
           } catch (error) {
             addMessage("ai", "**Error:** Could not get response");
             console.error(error);
+            messageInput.value = message;
           } finally {
             loading.classList.add("hidden");
             window.scrollTo(0, h + 50);
@@ -445,7 +449,7 @@
           );
 
           if (!response.ok) {
-            throw new Error("Network response was not ok");
+            throw new Error("Response is not OK");
           }
 
           const data = await response.json();
@@ -500,15 +504,12 @@
             settings.PROXY +
               `${
                 settings.ENDPOINT.replace("chat/completions", "models")
-              }?type=all`,
+              }`,
             options,
           )
             .then((response) => response.json())
             .then((response) => {
-              const data = response.data.map((m) => {
-                m.created = (new Date(m.created * 1000)).toISOString();
-                return m;
-              });
+              const data = response.data;
 
               setLocalStorage(`MODELS`, JSON.stringify(data));
               renderModels(data);
@@ -531,6 +532,7 @@
           "video": "📽",
         };
 
+        let MODEL_TEMPLATE;
         /**
          * Function to render models in modelsContainer
          *
@@ -538,6 +540,11 @@
          */
         function renderModels(models) {
           models = models || [];
+
+          MODEL_TEMPLATE = MODEL_TEMPLATE || document.getElementById(
+            "model-template",
+          );
+
           const selectedModel = getLocalStorage("MODEL");
           const $modelsContainer = document.querySelector(
             "#models-container",
@@ -545,9 +552,7 @@
           const modelsContainer = $modelsContainer.cloneNode(true);
           modelsContainer.innerHTML = ""; // Clear existing content
 
-          const defaultModel = $modelsContainer.querySelector(
-            "#model-template",
-          ).cloneNode(true);
+          const defaultModel = MODEL_TEMPLATE.cloneNode(true);
 
           if (!models || (models.length < 1)) {
             modelsContainer.appendChild(defaultModel);
